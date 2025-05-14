@@ -94,11 +94,23 @@
             border: 1px solid #444; /* 暗めのボーダー */
             border-radius: 4px;
             background-color: #2a2a2a; /* アイテム行の背景 */
+            flex-wrap: wrap; /* ★変更点: 要素の折り返しを許可 */
         }
         .item-row select { flex-basis: 150px; flex-shrink: 0; }
-        .item-row input[type="text"] { flex-grow: 1; }
+        .item-row input[type="text"] { flex-grow: 1; } /* デフォルトで横に伸びる */
         .item-row input[type="checkbox"] { flex-basis: 20px; flex-shrink: 0; }
         .item-row button { margin-top: 0; }
+
+        /* ★追加: 説明欄用スタイル */
+        .description-field {
+            flex-basis: 100% !important; /* 親要素の幅全体を占める */
+            margin-top: 8px; /* 上の要素との間に少し余白 */
+        }
+        /* 特技の名称と説明の間の調整 */
+        .dynamic-feat-name + .description-field {
+             margin-left: 0; /* もしflex-gapで意図しない隙間が空く場合 */
+        }
+
 
         .status-display {
             font-size: 1.2em;
@@ -148,7 +160,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Aionia trpg　非公式キャラシメーカー</h1>
+        <h1>Aionia trpg 非公式ツール</h1>
 
         <div class="section">
             <h2>基本情報</h2>
@@ -311,13 +323,31 @@
             addDynamicItem('weaknessesContainer', (index) => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
+                // 弱点の説明欄は全幅を使用
                 div.innerHTML = `
-                    <input type="text" placeholder="弱点の詳細" class="dynamic-weakness" onchange="updateAllStats()">
+                    <input type="text" placeholder="弱点の詳細" class="dynamic-weakness description-field" onchange="updateAllStats()">
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                `;
+                // 弱点の場合、ボタンも改行されると不自然なので、ボタンはテキスト入力の隣に配置したい。
+                // そのため、弱点の .item-row は flex-wrap: wrap しない方が良いかもしれない。
+                // または、弱点入力とボタンを別のdivで囲み、そのdivにflex-basis:100%を適用しない。
+                // ここでは、弱点は一行のままにしておきます。もし弱点も説明を改行したい場合は別途指定が必要です。
+                // 今回の修正対象は専門技能、特技、武器、防具なので、弱点はこのまま。
+                // もし弱点も改行したい場合は、以下のように input に description-field をつけ、.item-row の flex-wrap が効くようにする。
+                // div.innerHTML = `
+                //     <input type="text" placeholder="弱点の詳細" class="dynamic-weakness description-field" onchange="updateAllStats()">
+                //     <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="flex-shrink:0;">削除</button>
+                // `;
+                // ↑ 弱点の場合、入力欄と削除ボタンを一行にしたい場合は、 description-field をつけないか、item-row から flex-wrap を外す。
+                // 要望は「専門技能、特技、武器、防具」なので、弱点は元のまま（一行）にしておきます。
+                div.innerHTML = `
+                    <input type="text" placeholder="弱点の詳細" class="dynamic-weakness" style="flex-grow:1;" onchange="updateAllStats()">
                     <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
                 `;
                 return div;
             });
         }
+
 
         function addSpecialSkill() {
             addDynamicItem('specialSkillsContainer', (index) => {
@@ -325,10 +355,12 @@
                 div.className = 'item-row';
                 let optionsHtml = specialSkillBaseTypes.map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
-                    <select class="dynamic-special-skill-type" onchange="updateAllStats()">${optionsHtml}</select>
-                    <input type="text" placeholder="専門技能名" class="dynamic-special-skill-name" onchange="updateAllStats()">
+                    <select class="dynamic-special-skill-type" onchange="updateAllStats()"></select>
+                    <input type="text" placeholder="専門技能名・詳細" class="dynamic-special-skill-name description-field" onchange="updateAllStats()">
                     <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
                 `;
+                // select の後に optionsHtml を設定
+                div.querySelector('.dynamic-special-skill-type').innerHTML = optionsHtml;
                 return div;
             });
         }
@@ -339,14 +371,18 @@
                 div.className = 'item-row';
                 let typeOptionsHtml = featTypes.map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
-                    <select class="dynamic-feat-type" style="flex-basis:100px;" onchange="updateAllStats()">${typeOptionsHtml}</select>
-                    <input type="text" placeholder="特技名" class="dynamic-feat-name" style="flex-basis:150px;" onchange="updateAllStats()">
-                    <input type="text" placeholder="特技説明" class="dynamic-feat-description" style="flex-grow:1;" onchange="updateAllStats()">
-                    <label style="margin-top:0; display:flex; align-items:center; font-weight:normal; color: #f0f0f0;">
+                    <select class="dynamic-feat-type" style="flex-basis:100px;" onchange="updateAllStats()"></select>
+                    <input type="text" placeholder="特技名" class="dynamic-feat-name" style="flex-basis:180px; flex-grow:0;" onchange="updateAllStats()">
+                    <label style="margin-top:0; display:flex; align-items:center; font-weight:normal; color: #f0f0f0; flex-grow: 1; justify-content: flex-start;">
                         <input type="checkbox" class="dynamic-feat-reward" onchange="updateAllStats()" style="margin-right:5px;"> シナリオ報酬
                     </label>
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="flex-shrink:0;">削除</button>
+                    <textarea placeholder="特技説明" class="dynamic-feat-description description-field" style="height: 60px;" onchange="updateAllStats()"></textarea>
                 `;
+                // select の後に optionsHtml を設定
+                div.querySelector('.dynamic-feat-type').innerHTML = typeOptionsHtml;
+                // 特技の説明は長くなる可能性があるので textarea に変更し、class を description-field に
+                // 特技名とシナリオ報酬チェックボックス、削除ボタンを一行に収めるために、説明(textarea)を最後に配置
                 return div;
             });
         }
@@ -357,10 +393,11 @@
                 div.className = 'item-row';
                 let optionsHtml = Object.keys(weaponTypes).map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
-                    <select class="dynamic-weapon-type" onchange="updateAllStats()">${optionsHtml}</select>
-                    <input type="text" placeholder="武器名・詳細" class="dynamic-weapon-description" onchange="updateAllStats()">
+                    <select class="dynamic-weapon-type" onchange="updateAllStats()"></select>
+                    <input type="text" placeholder="武器名・詳細" class="dynamic-weapon-description description-field" onchange="updateAllStats()">
                     <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
                 `;
+                div.querySelector('.dynamic-weapon-type').innerHTML = optionsHtml;
                 return div;
             });
         }
@@ -371,10 +408,11 @@
                 div.className = 'item-row';
                 let optionsHtml = Object.keys(armorTypes).map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
-                    <select class="dynamic-armor-type" onchange="updateAllStats()">${optionsHtml}</select>
-                    <input type="text" placeholder="防具名・詳細" class="dynamic-armor-description" onchange="updateAllStats()">
+                    <select class="dynamic-armor-type" onchange="updateAllStats()"></select>
+                    <input type="text" placeholder="防具名・詳細" class="dynamic-armor-description description-field" onchange="updateAllStats()">
                     <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
                 `;
+                div.querySelector('.dynamic-armor-type').innerHTML = optionsHtml;
                 return div;
             });
         }
@@ -382,8 +420,8 @@
         function addSessionLog() {
             addDynamicItem('sessionLogsContainer', (index) => {
                 const div = document.createElement('div');
-                div.className = 'item-row';
-                div.style.flexDirection = 'column'; // 縦に並べる
+                div.className = 'item-row'; // item-row の flex-wrap:wrap が影響する
+                div.style.flexDirection = 'column'; // このセクションは元々縦なので維持
                 div.style.alignItems = 'stretch';
                 div.innerHTML = `
                     <input type="text" placeholder="シナリオ名" class="dynamic-session-title" onchange="updateAllStats()">
@@ -427,7 +465,7 @@
             const featRows = document.querySelectorAll('#featsContainer .item-row');
             currentExperience -= featRows.length * 5;
             featRows.forEach(row => {
-                if (row.querySelector('.dynamic-feat-reward').checked) {
+                if (row.querySelector('.dynamic-feat-reward') && row.querySelector('.dynamic-feat-reward').checked) {
                     currentExperience += 5;
                 }
             });
@@ -451,15 +489,21 @@
             // 荷重計算
             let currentLoad = 0;
             document.querySelectorAll('#weaponsContainer .item-row').forEach(row => {
-                const type = row.querySelector('.dynamic-weapon-type').value;
-                if (weaponTypes[type]) {
-                    currentLoad += weaponTypes[type];
+                const typeElement = row.querySelector('.dynamic-weapon-type');
+                if (typeElement) {
+                    const type = typeElement.value;
+                    if (weaponTypes[type]) {
+                        currentLoad += weaponTypes[type];
+                    }
                 }
             });
             document.querySelectorAll('#armorsContainer .item-row').forEach(row => {
-                const type = row.querySelector('.dynamic-armor-type').value;
-                if (armorTypes[type]) {
-                    currentLoad += armorTypes[type];
+                 const typeElement = row.querySelector('.dynamic-armor-type');
+                if (typeElement) {
+                    const type = typeElement.value;
+                    if (armorTypes[type]) {
+                        currentLoad += armorTypes[type];
+                    }
                 }
             });
             load = currentLoad;
@@ -491,14 +535,14 @@
                 }
             });
 
-            document.querySelectorAll('#weaknessesContainer .item-row').forEach(row => {
-                data.weaknesses.push(row.querySelector('.dynamic-weakness').value);
+            document.querySelectorAll('#weaknessesContainer .item-row .dynamic-weakness').forEach(input => {
+                data.weaknesses.push(input.value);
             });
 
             document.querySelectorAll('#specialSkillsContainer .item-row').forEach(row => {
                 data.specialSkills.push({
                     type: row.querySelector('.dynamic-special-skill-type').value,
-                    name: row.querySelector('.dynamic-special-skill-name').value
+                    name: row.querySelector('.dynamic-special-skill-name').value // name が詳細を兼ねる
                 });
             });
 
@@ -577,29 +621,28 @@
             document.getElementById('initialScars').value = data.initialScars || '0';
             document.getElementById('initialWeaknessCheck').checked = data.initialWeaknessCheck || false;
             document.getElementById('initialWeaknessDescription').value = data.initialWeaknessDescription || '';
-            toggleInitialWeaknessDescription(); // チェックボックスの状態に応じて入力欄の有効/無効を切り替え
+            toggleInitialWeaknessDescription(); 
 
             if (data.generalSkills) {
                 generalSkillNames.forEach(skillName => {
                     const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
-                    if (document.getElementById(checkboxId)) { // 要素が存在するか確認
+                    if (document.getElementById(checkboxId)) { 
                         document.getElementById(checkboxId).checked = data.generalSkills[skillName] || false;
                     }
                 });
-            } else { // 古いデータ形式などで generalSkills がない場合
-                populateGeneralSkills(); // デフォルトで再描画
+            } else { 
+                populateGeneralSkills(); 
             }
 
-
-            // 動的リストのクリアと再構築
             const containersToClear = ['weaknessesContainer', 'specialSkillsContainer', 'featsContainer', 'weaponsContainer', 'armorsContainer', 'sessionLogsContainer'];
             containersToClear.forEach(id => document.getElementById(id).innerHTML = '');
 
             if (data.weaknesses) {
                 data.weaknesses.forEach(text => {
-                    addWeakness();
+                    addWeakness(); // 弱点は改行しない設定のまま
                     const rows = document.querySelectorAll('#weaknessesContainer .item-row');
-                    rows[rows.length - 1].querySelector('.dynamic-weakness').value = text;
+                    const lastRowInput = rows[rows.length - 1].querySelector('.dynamic-weakness');
+                    if (lastRowInput) lastRowInput.value = text;
                 });
             }
 
@@ -608,8 +651,12 @@
                     addSpecialSkill();
                     const rows = document.querySelectorAll('#specialSkillsContainer .item-row');
                     const lastRow = rows[rows.length - 1];
-                    lastRow.querySelector('.dynamic-special-skill-type').value = skill.type;
-                    lastRow.querySelector('.dynamic-special-skill-name').value = skill.name;
+                    if (lastRow) {
+                        const typeSelect = lastRow.querySelector('.dynamic-special-skill-type');
+                        const nameInput = lastRow.querySelector('.dynamic-special-skill-name');
+                        if (typeSelect) typeSelect.value = skill.type;
+                        if (nameInput) nameInput.value = skill.name;
+                    }
                 });
             }
 
@@ -618,10 +665,16 @@
                     addFeat();
                     const rows = document.querySelectorAll('#featsContainer .item-row');
                     const lastRow = rows[rows.length - 1];
-                    lastRow.querySelector('.dynamic-feat-type').value = feat.type;
-                    lastRow.querySelector('.dynamic-feat-name').value = feat.name;
-                    lastRow.querySelector('.dynamic-feat-description').value = feat.description;
-                    lastRow.querySelector('.dynamic-feat-reward').checked = feat.reward;
+                     if (lastRow) {
+                        const typeSelect = lastRow.querySelector('.dynamic-feat-type');
+                        const nameInput = lastRow.querySelector('.dynamic-feat-name');
+                        const descTextarea = lastRow.querySelector('.dynamic-feat-description');
+                        const rewardCheckbox = lastRow.querySelector('.dynamic-feat-reward');
+                        if (typeSelect) typeSelect.value = feat.type;
+                        if (nameInput) nameInput.value = feat.name;
+                        if (descTextarea) descTextarea.value = feat.description;
+                        if (rewardCheckbox) rewardCheckbox.checked = feat.reward;
+                    }
                 });
             }
 
@@ -630,8 +683,12 @@
                     addWeapon();
                     const rows = document.querySelectorAll('#weaponsContainer .item-row');
                     const lastRow = rows[rows.length - 1];
-                    lastRow.querySelector('.dynamic-weapon-type').value = weapon.type;
-                    lastRow.querySelector('.dynamic-weapon-description').value = weapon.description;
+                    if (lastRow) {
+                        const typeSelect = lastRow.querySelector('.dynamic-weapon-type');
+                        const descInput = lastRow.querySelector('.dynamic-weapon-description');
+                        if (typeSelect) typeSelect.value = weapon.type;
+                        if (descInput) descInput.value = weapon.description;
+                    }
                 });
             }
 
@@ -640,8 +697,12 @@
                     addArmor();
                     const rows = document.querySelectorAll('#armorsContainer .item-row');
                     const lastRow = rows[rows.length - 1];
-                    lastRow.querySelector('.dynamic-armor-type').value = armor.type;
-                    lastRow.querySelector('.dynamic-armor-description').value = armor.description;
+                     if (lastRow) {
+                        const typeSelect = lastRow.querySelector('.dynamic-armor-type');
+                        const descInput = lastRow.querySelector('.dynamic-armor-description');
+                        if (typeSelect) typeSelect.value = armor.type;
+                        if (descInput) descInput.value = armor.description;
+                    }
                 });
             }
 
@@ -650,14 +711,20 @@
                     addSessionLog();
                     const rows = document.querySelectorAll('#sessionLogsContainer .item-row');
                     const lastRow = rows[rows.length - 1];
-                    lastRow.querySelector('.dynamic-session-title').value = log.title;
-                    lastRow.querySelector('.dynamic-session-scars').value = log.scars;
-                    lastRow.querySelector('.dynamic-session-exp').value = log.exp;
-                    lastRow.querySelector('.dynamic-session-notes').value = log.notes;
+                    if (lastRow) {
+                        const titleInput = lastRow.querySelector('.dynamic-session-title');
+                        const scarsInput = lastRow.querySelector('.dynamic-session-scars');
+                        const expInput = lastRow.querySelector('.dynamic-session-exp');
+                        const notesTextarea = lastRow.querySelector('.dynamic-session-notes');
+                        if (titleInput) titleInput.value = log.title;
+                        if (scarsInput) scarsInput.value = log.scars;
+                        if (expInput) expInput.value = log.exp;
+                        if (notesTextarea) notesTextarea.value = log.notes;
+                    }
                 });
             }
 
-            updateAllStats(); // 最後に全ての数値を再計算して表示を更新
+            updateAllStats(); 
         }
 
     </script>
