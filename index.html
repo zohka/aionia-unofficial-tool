@@ -371,7 +371,7 @@
                 div.className = 'item-row';
                 let typeOptionsHtml = featTypes.map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
-                    <select class="dynamic-feat-type" style="flex-basis:100px;" onchange="updateAllStats()"></select>
+                    <select class="dynamic-feat-type" style="flex-basis:50px;" onchange="updateAllStats()"></select>
                     <input type="text" placeholder="特技名" class="dynamic-feat-name" style="flex-basis:180px; flex-grow:0;" onchange="updateAllStats()">
                     <label style="margin-top:0; display:flex; align-items:center; font-weight:normal; color: #f0f0f0; flex-grow: 1; justify-content: flex-start;">
                         <input type="checkbox" class="dynamic-feat-reward" onchange="updateAllStats()" style="margin-right:5px;"> シナリオ報酬
