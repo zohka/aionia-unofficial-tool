@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRPGキャラクターシート</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #121212; /* 黒背景 */
+            color: #f0f0f0; /* 白字 */
+        }
+        .container {
+            background-color: #1e1e1e; /* やや明るい黒 */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255,255,255,0.05); /* 白い影を薄く */
+        }
+        h1, h2, h3 {
+            color: #e0e0e0; /* やや明るい白 */
+            border-bottom: 2px solid #444; /* 暗めのボーダー */
+            padding-bottom: 5px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #cccccc; /* ややグレーがかった白 */
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #555; /* 暗めのボーダー */
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #333; /* 暗い入力欄背景 */
+            color: #f0f0f0; /* 入力文字は白 */
+        }
+        input[type="text"]::placeholder,
+        textarea::placeholder {
+            color: #aaa; /* プレースホルダーの色 */
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        input[type="checkbox"] {
+            margin-right: 5px;
+            vertical-align: middle;
+            accent-color: #007bff; /* チェックボックスの色はアクセントカラー */
+        }
+        .inline-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .inline-inputs input[type="text"],
+        .inline-inputs select {
+            width: auto;
+            flex-grow: 1;
+        }
+        button {
+            background-color: #007bff; /* プライマリボタンの色 */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1em;
+            transition: background-color 0.2s ease-in-out;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .remove-button {
+            background-color: #dc3545; /* 削除ボタンの色 */
+        }
+        .remove-button:hover {
+            background-color: #c82333;
+        }
+        .item-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #444; /* 暗めのボーダー */
+            border-radius: 4px;
+            background-color: #2a2a2a; /* アイテム行の背景 */
+        }
+        .item-row select { flex-basis: 150px; flex-shrink: 0; }
+        .item-row input[type="text"] { flex-grow: 1; }
+        .item-row input[type="checkbox"] { flex-basis: 20px; flex-shrink: 0; }
+        .item-row button { margin-top: 0; }
+
+        .status-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 5px;
+            color: #00aaff; /* ステータス表示のアクセントカラー */
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #252525; /* セクションの背景 */
+            border-radius: 5px;
+        }
+        .flex-container {
+            display: flex;
+            gap: 20px;
+        }
+        .flex-item {
+            flex: 1;
+        }
+        #initialWeaknessDescription {
+            background-color: #404040; /* 非アクティブ時の背景色 */
+            color: #888; /* 非アクティブ時の文字色 */
+        }
+        #initialWeaknessDescription:not(:disabled) {
+            background-color: #333; /* アクティブ時の背景色 */
+            color: #f0f0f0; /* アクティブ時の文字色 */
+        }
+        input[type="file"] {
+            color: #ccc; /* ファイル選択の文字色 */
+        }
+        /* スクロールバーのスタイル（オプション、ブラウザによる） */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2c2c2c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>慈悲なきアイオニア　非公式キャラシメーカー</h1>
+
+        <div class="section">
+            <h2>基本情報</h2>
+            <div>
+                <label for="characterName">キャラクター名:</label>
+                <input type="text" id="characterName" onchange="updateAllStats()">
+            </div>
+            <div>
+                <label for="characterRace">種族:</label>
+                <input type="text" id="characterRace" onchange="updateAllStats()">
+            </div>
+            <div>
+                <label for="characterSetting">キャラクター設定:</label>
+                <textarea id="characterSetting" onchange="updateAllStats()"></textarea>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>ステータス</h2>
+            <div class="flex-container">
+                <div class="flex-item">
+                    <label>経験点:</label>
+                    <div id="experiencePointsDisplay" class="status-display">100</div>
+                </div>
+                <div class="flex-item">
+                    <label>傷痕:</label>
+                    <div id="scarsDisplay" class="status-display">0</div>
+                </div>
+                <div class="flex-item">
+                    <label for="initialScars">初期傷痕 (0-10):</label>
+                    <input type="number" id="initialScars" min="0" max="10" value="0" onchange="updateAllStats()">
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>弱点</h2>
+            <div id="weaknessesContainer">
+                </div>
+            <button type="button" onclick="addWeakness()">弱点を追加</button>
+            <h3>初期弱点</h3>
+            <div>
+                <input type="checkbox" id="initialWeaknessCheck" onchange="toggleInitialWeaknessDescription(); updateAllStats();">
+                <label for="initialWeaknessCheck" style="display:inline;">初期弱点を負う（経験点+10）</label>
+                <input type="text" id="initialWeaknessDescription" placeholder="初期弱点の詳細" disabled onchange="updateAllStats()">
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>技能</h2>
+            <h3>一般技能</h3>
+            <div id="generalSkillsContainer">
+                </div>
+            <h3>専門技能</h3>
+            <div id="specialSkillsContainer">
+                </div>
+            <button type="button" onclick="addSpecialSkill()">専門技能を追加</button>
+        </div>
+
+        <div class="section">
+            <h2>特技</h2>
+            <div id="featsContainer">
+                </div>
+            <button type="button" onclick="addFeat()">特技を追加</button>
+        </div>
+
+        <div class="section">
+            <h2>装備品</h2>
+            <label>荷重:</label>
+            <div id="loadDisplay" class="status-display">0</div>
+            <h3>武器</h3>
+            <div id="weaponsContainer">
+                </div>
+            <button type="button" onclick="addWeapon()">武器を追加</button>
+            <h3>防具</h3>
+            <div id="armorsContainer">
+                </div>
+            <button type="button" onclick="addArmor()">防具を追加</button>
+        </div>
+
+        <div class="section">
+            <h2>セッションの記録</h2>
+            <div id="sessionLogsContainer">
+                </div>
+            <button type="button" onclick="addSessionLog()">セッション記録を追加</button>
+        </div>
+
+        <div class="section">
+            <h2>データ管理</h2>
+            <button type="button" onclick="exportData()">キャラクターデータをエクスポート</button>
+            <label for="importFile" style="margin-top: 15px;">キャラクターデータをインポート:</label>
+            <input type="file" id="importFile" accept=".txt" onchange="importData(event)">
+        </div>
+    </div>
+
+    <script>
+        // 初期値
+        let experiencePoints = 100;
+        let scars = 0;
+        let load = 0;
+
+        const generalSkillNames = ["運動", "回避", "感覚", "観察", "技巧", "射撃", "社交", "知識", "白兵", "防御"];
+        const specialSkillBaseTypes = ["運動", "感覚", "観察", "技巧", "射撃", "社交", "知識", "白兵"];
+        const featTypes = ["戦術", "魔術", "特徴"];
+        const weaponTypes = {
+            "小型白兵武器": 1,
+            "中型白兵武器": 3,
+            "大型白兵武器": 5,
+            "射撃武器": 2,
+            "魔術触媒": 1
+        };
+        const armorTypes = {
+            "軽装防具": 2,
+            "重装防具": 5
+        };
+
+        // 初期化処理
+        document.addEventListener('DOMContentLoaded', () => {
+            populateGeneralSkills();
+            updateAllStats();
+        });
+
+        function populateGeneralSkills() {
+            const container = document.getElementById('generalSkillsContainer');
+            container.innerHTML = ''; // 既存の要素をクリア
+            generalSkillNames.forEach(skillName => {
+                const div = document.createElement('div');
+                const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
+                div.innerHTML = `
+                    <input type="checkbox" id="${checkboxId}" name="${skillName}" onchange="updateAllStats()">
+                    <label for="${checkboxId}" style="display:inline; font-weight:normal;">${skillName}</label>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleInitialWeaknessDescription() {
+            const checkbox = document.getElementById('initialWeaknessCheck');
+            const descriptionInput = document.getElementById('initialWeaknessDescription');
+            descriptionInput.disabled = !checkbox.checked;
+            if (!checkbox.checked) {
+                descriptionInput.value = ''; // チェックが外れたら内容をクリア
+            }
+        }
+
+        // --- 追加・削除関数 ---
+        function addDynamicItem(containerId, createRowFunction) {
+            const container = document.getElementById(containerId);
+            const newItemRow = createRowFunction(container.children.length);
+            container.appendChild(newItemRow);
+            updateAllStats();
+        }
+
+        function removeDynamicItem(buttonElement) {
+            buttonElement.parentElement.remove();
+            updateAllStats();
+        }
+
+        function addWeakness() {
+            addDynamicItem('weaknessesContainer', (index) => {
+                const div = document.createElement('div');
+                div.className = 'item-row';
+                div.innerHTML = `
+                    <input type="text" placeholder="弱点の詳細" class="dynamic-weakness" onchange="updateAllStats()">
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                `;
+                return div;
+            });
+        }
+
+        function addSpecialSkill() {
+            addDynamicItem('specialSkillsContainer', (index) => {
+                const div = document.createElement('div');
+                div.className = 'item-row';
+                let optionsHtml = specialSkillBaseTypes.map(type => `<option value="${type}">${type}</option>`).join('');
+                div.innerHTML = `
+                    <select class="dynamic-special-skill-type" onchange="updateAllStats()">${optionsHtml}</select>
+                    <input type="text" placeholder="専門技能名" class="dynamic-special-skill-name" onchange="updateAllStats()">
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                `;
+                return div;
+            });
+        }
+
+        function addFeat() {
+            addDynamicItem('featsContainer', (index) => {
+                const div = document.createElement('div');
+                div.className = 'item-row';
+                let typeOptionsHtml = featTypes.map(type => `<option value="${type}">${type}</option>`).join('');
+                div.innerHTML = `
+                    <select class="dynamic-feat-type" style="flex-basis:100px;" onchange="updateAllStats()">${typeOptionsHtml}</select>
+                    <input type="text" placeholder="特技名" class="dynamic-feat-name" style="flex-basis:150px;" onchange="updateAllStats()">
+                    <input type="text" placeholder="特技説明" class="dynamic-feat-description" style="flex-grow:1;" onchange="updateAllStats()">
+                    <label style="margin-top:0; display:flex; align-items:center; font-weight:normal; color: #f0f0f0;">
+                        <input type="checkbox" class="dynamic-feat-reward" onchange="updateAllStats()" style="margin-right:5px;"> シナリオ報酬
+                    </label>
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                `;
+                return div;
+            });
+        }
+
+        function addWeapon() {
+            addDynamicItem('weaponsContainer', (index) => {
+                const div = document.createElement('div');
+                div.className = 'item-row';
+                let optionsHtml = Object.keys(weaponTypes).map(type => `<option value="${type}">${type}</option>`).join('');
+                div.innerHTML = `
+                    <select class="dynamic-weapon-type" onchange="updateAllStats()">${optionsHtml}</select>
+                    <input type="text" placeholder="武器名・詳細" class="dynamic-weapon-description" onchange="updateAllStats()">
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                `;
+                return div;
+            });
+        }
+
+        function addArmor() {
+            addDynamicItem('armorsContainer', (index) => {
+                const div = document.createElement('div');
+                div.className = 'item-row';
+                let optionsHtml = Object.keys(armorTypes).map(type => `<option value="${type}">${type}</option>`).join('');
+                div.innerHTML = `
+                    <select class="dynamic-armor-type" onchange="updateAllStats()">${optionsHtml}</select>
+                    <input type="text" placeholder="防具名・詳細" class="dynamic-armor-description" onchange="updateAllStats()">
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                `;
+                return div;
+            });
+        }
+
+        function addSessionLog() {
+            addDynamicItem('sessionLogsContainer', (index) => {
+                const div = document.createElement('div');
+                div.className = 'item-row';
+                div.style.flexDirection = 'column'; // 縦に並べる
+                div.style.alignItems = 'stretch';
+                div.innerHTML = `
+                    <input type="text" placeholder="シナリオ名" class="dynamic-session-title" onchange="updateAllStats()">
+                    <div class="inline-inputs" style="margin-top:5px;">
+                        <label style="margin-top:0; flex-basis:100px;">受けた傷痕:</label>
+                        <input type="number" value="0" class="dynamic-session-scars" onchange="updateAllStats()" style="width:80px;">
+                        <label style="margin-top:0; flex-basis:100px; margin-left:10px;">追加経験点:</label>
+                        <input type="number" value="0" class="dynamic-session-exp" onchange="updateAllStats()" style="width:80px;">
+                    </div>
+                    <textarea placeholder="その他記録" class="dynamic-session-notes" style="margin-top:5px;" onchange="updateAllStats()"></textarea>
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="align-self:flex-end;">記録を削除</button>
+                `;
+                return div;
+            });
+        }
+
+
+        // --- ステータス更新関数 ---
+        function updateAllStats() {
+            // 経験点計算
+            let currentExperience = 100;
+            const initialScarsValue = parseInt(document.getElementById('initialScars').value) || 0;
+            currentExperience += initialScarsValue;
+
+            if (document.getElementById('initialWeaknessCheck').checked) {
+                currentExperience += 10;
+            }
+
+            let generalSkillsChecked = 0;
+            generalSkillNames.forEach(skillName => {
+                const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
+                if (document.getElementById(checkboxId) && document.getElementById(checkboxId).checked) {
+                    generalSkillsChecked++;
+                }
+            });
+            currentExperience -= generalSkillsChecked * 10;
+
+            const specialSkillRows = document.querySelectorAll('#specialSkillsContainer .item-row');
+            currentExperience -= specialSkillRows.length * 5;
+
+            const featRows = document.querySelectorAll('#featsContainer .item-row');
+            currentExperience -= featRows.length * 5;
+            featRows.forEach(row => {
+                if (row.querySelector('.dynamic-feat-reward').checked) {
+                    currentExperience += 5;
+                }
+            });
+
+            document.querySelectorAll('.dynamic-session-exp').forEach(input => {
+                currentExperience += parseInt(input.value) || 0;
+            });
+
+            experiencePoints = currentExperience;
+            document.getElementById('experiencePointsDisplay').textContent = experiencePoints;
+
+            // 傷痕計算
+            let currentScars = 0;
+            currentScars += initialScarsValue;
+            document.querySelectorAll('.dynamic-session-scars').forEach(input => {
+                currentScars += parseInt(input.value) || 0;
+            });
+            scars = currentScars;
+            document.getElementById('scarsDisplay').textContent = scars;
+
+            // 荷重計算
+            let currentLoad = 0;
+            document.querySelectorAll('#weaponsContainer .item-row').forEach(row => {
+                const type = row.querySelector('.dynamic-weapon-type').value;
+                if (weaponTypes[type]) {
+                    currentLoad += weaponTypes[type];
+                }
+            });
+            document.querySelectorAll('#armorsContainer .item-row').forEach(row => {
+                const type = row.querySelector('.dynamic-armor-type').value;
+                if (armorTypes[type]) {
+                    currentLoad += armorTypes[type];
+                }
+            });
+            load = currentLoad;
+            document.getElementById('loadDisplay').textContent = load;
+        }
+
+        // --- データエクスポート/インポート ---
+        function gatherData() {
+            const data = {
+                characterName: document.getElementById('characterName').value,
+                characterRace: document.getElementById('characterRace').value,
+                characterSetting: document.getElementById('characterSetting').value,
+                initialScars: document.getElementById('initialScars').value,
+                initialWeaknessCheck: document.getElementById('initialWeaknessCheck').checked,
+                initialWeaknessDescription: document.getElementById('initialWeaknessDescription').value,
+                generalSkills: {},
+                weaknesses: [],
+                specialSkills: [],
+                feats: [],
+                weapons: [],
+                armors: [],
+                sessionLogs: []
+            };
+
+            generalSkillNames.forEach(skillName => {
+                const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
+                if (document.getElementById(checkboxId)) { // 要素が存在するか確認
+                    data.generalSkills[skillName] = document.getElementById(checkboxId).checked;
+                }
+            });
+
+            document.querySelectorAll('#weaknessesContainer .item-row').forEach(row => {
+                data.weaknesses.push(row.querySelector('.dynamic-weakness').value);
+            });
+
+            document.querySelectorAll('#specialSkillsContainer .item-row').forEach(row => {
+                data.specialSkills.push({
+                    type: row.querySelector('.dynamic-special-skill-type').value,
+                    name: row.querySelector('.dynamic-special-skill-name').value
+                });
+            });
+
+            document.querySelectorAll('#featsContainer .item-row').forEach(row => {
+                data.feats.push({
+                    type: row.querySelector('.dynamic-feat-type').value,
+                    name: row.querySelector('.dynamic-feat-name').value,
+                    description: row.querySelector('.dynamic-feat-description').value,
+                    reward: row.querySelector('.dynamic-feat-reward').checked
+                });
+            });
+
+            document.querySelectorAll('#weaponsContainer .item-row').forEach(row => {
+                data.weapons.push({
+                    type: row.querySelector('.dynamic-weapon-type').value,
+                    description: row.querySelector('.dynamic-weapon-description').value
+                });
+            });
+
+            document.querySelectorAll('#armorsContainer .item-row').forEach(row => {
+                data.armors.push({
+                    type: row.querySelector('.dynamic-armor-type').value,
+                    description: row.querySelector('.dynamic-armor-description').value
+                });
+            });
+
+            document.querySelectorAll('#sessionLogsContainer .item-row').forEach(row => {
+                data.sessionLogs.push({
+                    title: row.querySelector('.dynamic-session-title').value,
+                    scars: row.querySelector('.dynamic-session-scars').value,
+                    exp: row.querySelector('.dynamic-session-exp').value,
+                    notes: row.querySelector('.dynamic-session-notes').value
+                });
+            });
+            return data;
+        }
+
+        function exportData() {
+            const data = gatherData();
+            const jsonData = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonData], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const charName = document.getElementById('characterName').value || "character";
+            a.download = `${charName}_sheet.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    applyData(data);
+                } catch (error) {
+                    console.error("インポートエラー:", error);
+                    alert("ファイルの読み込みに失敗しました。正しい形式のファイルを選択してください。");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = null; // 同じファイルを連続して選択できるようにする
+        }
+
+        function applyData(data) {
+            document.getElementById('characterName').value = data.characterName || '';
+            document.getElementById('characterRace').value = data.characterRace || '';
+            document.getElementById('characterSetting').value = data.characterSetting || '';
+            document.getElementById('initialScars').value = data.initialScars || '0';
+            document.getElementById('initialWeaknessCheck').checked = data.initialWeaknessCheck || false;
+            document.getElementById('initialWeaknessDescription').value = data.initialWeaknessDescription || '';
+            toggleInitialWeaknessDescription(); // チェックボックスの状態に応じて入力欄の有効/無効を切り替え
+
+            if (data.generalSkills) {
+                generalSkillNames.forEach(skillName => {
+                    const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
+                    if (document.getElementById(checkboxId)) { // 要素が存在するか確認
+                        document.getElementById(checkboxId).checked = data.generalSkills[skillName] || false;
+                    }
+                });
+            } else { // 古いデータ形式などで generalSkills がない場合
+                populateGeneralSkills(); // デフォルトで再描画
+            }
+
+
+            // 動的リストのクリアと再構築
+            const containersToClear = ['weaknessesContainer', 'specialSkillsContainer', 'featsContainer', 'weaponsContainer', 'armorsContainer', 'sessionLogsContainer'];
+            containersToClear.forEach(id => document.getElementById(id).innerHTML = '');
+
+            if (data.weaknesses) {
+                data.weaknesses.forEach(text => {
+                    addWeakness();
+                    const rows = document.querySelectorAll('#weaknessesContainer .item-row');
+                    rows[rows.length - 1].querySelector('.dynamic-weakness').value = text;
+                });
+            }
+
+            if (data.specialSkills) {
+                data.specialSkills.forEach(skill => {
+                    addSpecialSkill();
+                    const rows = document.querySelectorAll('#specialSkillsContainer .item-row');
+                    const lastRow = rows[rows.length - 1];
+                    lastRow.querySelector('.dynamic-special-skill-type').value = skill.type;
+                    lastRow.querySelector('.dynamic-special-skill-name').value = skill.name;
+                });
+            }
+
+            if (data.feats) {
+                data.feats.forEach(feat => {
+                    addFeat();
+                    const rows = document.querySelectorAll('#featsContainer .item-row');
+                    const lastRow = rows[rows.length - 1];
+                    lastRow.querySelector('.dynamic-feat-type').value = feat.type;
+                    lastRow.querySelector('.dynamic-feat-name').value = feat.name;
+                    lastRow.querySelector('.dynamic-feat-description').value = feat.description;
+                    lastRow.querySelector('.dynamic-feat-reward').checked = feat.reward;
+                });
+            }
+
+            if (data.weapons) {
+                data.weapons.forEach(weapon => {
+                    addWeapon();
+                    const rows = document.querySelectorAll('#weaponsContainer .item-row');
+                    const lastRow = rows[rows.length - 1];
+                    lastRow.querySelector('.dynamic-weapon-type').value = weapon.type;
+                    lastRow.querySelector('.dynamic-weapon-description').value = weapon.description;
+                });
+            }
+
+            if (data.armors) {
+                data.armors.forEach(armor => {
+                    addArmor();
+                    const rows = document.querySelectorAll('#armorsContainer .item-row');
+                    const lastRow = rows[rows.length - 1];
+                    lastRow.querySelector('.dynamic-armor-type').value = armor.type;
+                    lastRow.querySelector('.dynamic-armor-description').value = armor.description;
+                });
+            }
+
+            if (data.sessionLogs) {
+                data.sessionLogs.forEach(log => {
+                    addSessionLog();
+                    const rows = document.querySelectorAll('#sessionLogsContainer .item-row');
+                    const lastRow = rows[rows.length - 1];
+                    lastRow.querySelector('.dynamic-session-title').value = log.title;
+                    lastRow.querySelector('.dynamic-session-scars').value = log.scars;
+                    lastRow.querySelector('.dynamic-session-exp').value = log.exp;
+                    lastRow.querySelector('.dynamic-session-notes').value = log.notes;
+                });
+            }
+
+            updateAllStats(); // 最後に全ての数値を再計算して表示を更新
+        }
+
+    </script>
+</body>
+</html>
