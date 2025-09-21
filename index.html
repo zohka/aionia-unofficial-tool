@@ -85,6 +85,14 @@
         .remove-button:hover {
             background-color: #c82333;
         }
+        /* ココフォリア出力ボタンのスタイル */
+        #cocofolia-export-btn {
+            background-color: #28a745; /* Green color */
+            margin-left: 10px;
+        }
+        #cocofolia-export-btn:hover {
+            background-color: #218838;
+        }
         .item-row {
             display: flex;
             gap: 10px;
@@ -101,12 +109,14 @@
         .item-row input[type="checkbox"] { flex-basis: 20px; flex-shrink: 0; }
         .item-row button { margin-top: 0; }
 
+        /* 説明欄用スタイル */
         .description-field {
             flex-basis: 100% !important; /* 親要素の幅全体を占める */
             margin-top: 8px; /* 上の要素との間に少し余白 */
         }
+        /* 特技の名称と説明の間の調整 */
         .dynamic-feat-name + .description-field {
-             margin-left: 0;
+            margin-left: 0; /* もしflex-gapで意図しない隙間が空く場合 */
         }
 
 
@@ -140,11 +150,6 @@
         input[type="file"] {
             color: #ccc; /* ファイル選択の文字色 */
         }
-        #copyFeedback { /* ★追加: コピーフィードバック用スタイル */
-            margin-left: 10px;
-            color: #28a745; /* 成功時の緑色 */
-            font-style: italic;
-        }
         /* スクロールバーのスタイル（オプション、ブラウザによる） */
         ::-webkit-scrollbar {
             width: 8px;
@@ -163,7 +168,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Aionia trpg 非公式ツール</h1>
+        <h1>TRPGキャラクターシート</h1>
 
         <div class="section">
             <h2>基本情報</h2>
@@ -202,7 +207,7 @@
         <div class="section">
             <h2>弱点</h2>
             <div id="weaknessesContainer">
-                </div>
+            </div>
             <button type="button" onclick="addWeakness()">弱点を追加</button>
             <h3>初期弱点</h3>
             <div>
@@ -216,17 +221,17 @@
             <h2>技能</h2>
             <h3>一般技能</h3>
             <div id="generalSkillsContainer">
-                </div>
+            </div>
             <h3>専門技能</h3>
             <div id="specialSkillsContainer">
-                </div>
+            </div>
             <button type="button" onclick="addSpecialSkill()">専門技能を追加</button>
         </div>
 
         <div class="section">
             <h2>特技</h2>
             <div id="featsContainer">
-                </div>
+            </div>
             <button type="button" onclick="addFeat()">特技を追加</button>
         </div>
 
@@ -236,35 +241,31 @@
             <div id="loadDisplay" class="status-display">0</div>
             <h3>武器</h3>
             <div id="weaponsContainer">
-                </div>
+            </div>
             <button type="button" onclick="addWeapon()">武器を追加</button>
             <h3>防具</h3>
             <div id="armorsContainer">
-                </div>
+            </div>
             <button type="button" onclick="addArmor()">防具を追加</button>
         </div>
 
         <div class="section">
             <h2>セッションの記録</h2>
             <div id="sessionLogsContainer">
-                </div>
+            </div>
             <button type="button" onclick="addSessionLog()">セッション記録を追加</button>
         </div>
 
         <div class="section">
             <h2>データ管理</h2>
             <button type="button" onclick="exportData()">キャラクターデータをエクスポート</button>
+            <button type="button" id="cocofolia-export-btn" onclick="exportForCocofolia()">ココフォリア駒出力</button>
             <label for="importFile" style="margin-top: 15px;">キャラクターデータをインポート:</label>
             <input type="file" id="importFile" accept=".txt" onchange="importData(event)">
-            <br> 
-            <button type="button" onclick="generateAndCopyText()" style="margin-top: 15px;">情報をテキスト形式でコピー</button> 
-            <span id="copyFeedback"></span> 
         </div>
     </div>
 
     <script>
-        // 初期値と既存の関数 (populateGeneralSkills, toggleInitialWeaknessDescription, addDynamicItem, removeDynamicItem, 各add...関数, updateAllStats, gatherData, exportData, importData, applyData) は変更なし
-
         // 初期値
         let experiencePoints = 100;
         let scars = 0;
@@ -426,8 +427,8 @@
         }
 
 
+        // --- ステータス更新関数 ---
         function updateAllStats() {
-            // (この関数は変更なし)
             // 経験点計算
             let currentExperience = 100;
             const initialScarsValue = parseInt(document.getElementById('initialScars').value) || 0;
@@ -485,7 +486,7 @@
                 }
             });
             document.querySelectorAll('#armorsContainer .item-row').forEach(row => {
-                 const typeElement = row.querySelector('.dynamic-armor-type');
+                const typeElement = row.querySelector('.dynamic-armor-type');
                 if (typeElement) {
                     const type = typeElement.value;
                     if (armorTypes[type]) {
@@ -497,8 +498,8 @@
             document.getElementById('loadDisplay').textContent = load;
         }
 
+        // --- データエクスポート/インポート ---
         function gatherData() {
-            // (この関数は変更なし)
             const data = {
                 characterName: document.getElementById('characterName').value,
                 characterRace: document.getElementById('characterRace').value,
@@ -568,7 +569,6 @@
         }
 
         function exportData() {
-            // (この関数は変更なし)
             const data = gatherData();
             const jsonData = JSON.stringify(data, null, 2);
             const blob = new Blob([jsonData], { type: 'text/plain' });
@@ -584,7 +584,6 @@
         }
 
         function importData(event) {
-            // (この関数は変更なし)
             const file = event.target.files[0];
             if (!file) {
                 return;
@@ -604,7 +603,6 @@
         }
 
         function applyData(data) {
-            // (この関数は変更なし)
             document.getElementById('characterName').value = data.characterName || '';
             document.getElementById('characterRace').value = data.characterRace || '';
             document.getElementById('characterSetting').value = data.characterSetting || '';
@@ -655,7 +653,7 @@
                     addFeat();
                     const rows = document.querySelectorAll('#featsContainer .item-row');
                     const lastRow = rows[rows.length - 1];
-                     if (lastRow) {
+                    if (lastRow) {
                         const typeSelect = lastRow.querySelector('.dynamic-feat-type');
                         const nameInput = lastRow.querySelector('.dynamic-feat-name');
                         const descTextarea = lastRow.querySelector('.dynamic-feat-description');
@@ -687,7 +685,7 @@
                     addArmor();
                     const rows = document.querySelectorAll('#armorsContainer .item-row');
                     const lastRow = rows[rows.length - 1];
-                     if (lastRow) {
+                    if (lastRow) {
                         const typeSelect = lastRow.querySelector('.dynamic-armor-type');
                         const descInput = lastRow.querySelector('.dynamic-armor-description');
                         if (typeSelect) typeSelect.value = armor.type;
@@ -713,162 +711,140 @@
                     }
                 });
             }
+
             updateAllStats();
         }
 
-        // --- ★★★ 新しい関数ここから ★★★ ---
-        function generateFormattedText() {
-            let output = "== 基本情報 ==\n";
-            output += `キャラクター名: ${document.getElementById('characterName').value || '(未入力)'}\n`;
-            output += `種族: ${document.getElementById('characterRace').value || '(未入力)'}\n`;
-            const setting = document.getElementById('characterSetting').value;
-            output += `キャラクター設定:\n${setting ? setting.split('\n').map(line => `  ${line}`).join('\n') : '  (未入力)'}\n\n`;
+        // --- ★ 新規追加: ココフォリア出力用関数 ★ ---
+        function exportForCocofolia() {
+            const data = gatherData(); // 既存のデータ収集関数を利用
 
-            output += "== ステータス ==\n";
-            output += `経験点: ${experiencePoints}\n`;
-            output += `傷痕: ${scars}\n`;
-            output += `初期傷痕: ${document.getElementById('initialScars').value || '0'}\n\n`;
-
-            output += "== 弱点 ==\n";
-            const weaknesses = document.querySelectorAll('#weaknessesContainer .dynamic-weakness');
-            if (weaknesses.length > 0) {
-                weaknesses.forEach(w => {
-                    output += `・ ${w.value || '(未入力)'}\n`;
-                });
-            } else {
-                output += "(なし)\n";
-            }
-            const initialWeaknessCheck = document.getElementById('initialWeaknessCheck').checked;
-            const initialWeaknessDesc = document.getElementById('initialWeaknessDescription').value;
-            output += `初期弱点: ${initialWeaknessCheck ? (initialWeaknessDesc || '(詳細未入力)') + " [取得済]" : "[未取得]"}\n\n`;
-
-            output += "== 技能 ==\n";
-            output += "[一般技能]\n";
-            let generalSkillsCount = 0;
+            // 1. チャットパレットの作成
+            let paletteLines = [];
+            paletteLines.push('// ----- 一般技能 -----');
             generalSkillNames.forEach(skillName => {
-                const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
-                const checkbox = document.getElementById(checkboxId);
-                if (checkbox && checkbox.checked) {
-                    output += `  ・ ${skillName} \n`;
-                    generalSkillsCount++;
+                const isAcquired = data.generalSkills[skillName];
+                if (isAcquired) {
+                    paletteLines.push(`2d10 《${skillName}》`);
                 } else {
-                    // output += `  ・ ${skillName}\n`; // 未取得のものも表示する場合
+                    paletteLines.push(`1d10 《${skillName}》`);
                 }
             });
-             if (generalSkillsCount === 0) output += "  (取得なし)\n";
 
-
-            output += "\n[専門技能]\n";
-            const specialSkills = document.querySelectorAll('#specialSkillsContainer .item-row');
-            if (specialSkills.length > 0) {
-                specialSkills.forEach(skill => {
-                    const type = skill.querySelector('.dynamic-special-skill-type').value;
-                    const name = skill.querySelector('.dynamic-special-skill-name').value;
-                    output += `  ・ ${type || '(種類未選択)'}: ${name || '(名称未入力)'}\n`;
+            if (data.specialSkills.length > 0) {
+                paletteLines.push('// ----- 専門技能 -----');
+                data.specialSkills.forEach(skill => {
+                    if (skill.name) {
+                        paletteLines.push(`3d10 《${skill.type}：${skill.name}》`);
+                    }
                 });
-            } else {
-                output += "  (なし)\n";
             }
-            output += "\n";
+            
+            // チェック項目を追加
+            paletteLines.push('// ----- チェック -----');
+            paletteLines.push('1d100>={ダメージ}+{傷痕} 〈ダメージチェック〉');
+            paletteLines.push('1d100>={ストレス} 〈ストレスチェック〉');
 
-            output += "== 特技 ==\n";
-            const feats = document.querySelectorAll('#featsContainer .item-row');
-            if (feats.length > 0) {
-                feats.forEach(feat => {
-                    const type = feat.querySelector('.dynamic-feat-type').value;
-                    const name = feat.querySelector('.dynamic-feat-name').value;
-                    const desc = feat.querySelector('.dynamic-feat-description').value;
-                    const reward = feat.querySelector('.dynamic-feat-reward').checked;
-                    output += `・ ${type || '(種類未選択)'} - ${name || '(名称未入力)'} ${reward ? '[シナリオ報酬]' : ''}\n`;
-                    output += `  説明: ${desc ? desc.split('\n').map(line => `    ${line}`).join('\n') : '(未入力)'}\n`;
-                });
-            } else {
-                output += "(なし)\n";
+            const chatPalette = paletteLines.join('\n');
+
+            // 2. メモ欄の作成
+            let memoLines = [];
+            memoLines.push(`種族: ${data.characterRace || '未設定'}`);
+            memoLines.push('▼設定');
+            memoLines.push(data.characterSetting || '（設定なし）');
+            memoLines.push('--------');
+
+            memoLines.push('▼弱点');
+            let hasWeakness = false;
+            if (data.initialWeaknessCheck && data.initialWeaknessDescription) {
+                memoLines.push(`・${data.initialWeaknessDescription} (初期)`);
+                hasWeakness = true;
             }
-            output += "\n";
-
-            output += "== 装備品 ==\n";
-            output += `荷重合計: ${load}\n`;
-            output += "[武器]\n";
-            const weapons = document.querySelectorAll('#weaponsContainer .item-row');
-            if (weapons.length > 0) {
-                weapons.forEach(weapon => {
-                    const type = weapon.querySelector('.dynamic-weapon-type').value;
-                    const desc = weapon.querySelector('.dynamic-weapon-description').value;
-                    output += `  ・ ${type || '(種類未選択)'}: ${desc || '(詳細未入力)'} (荷重: ${weaponTypes[type] || 0})\n`;
-                });
-            } else {
-                output += "  (なし)\n";
-            }
-
-            output += "\n[防具]\n";
-            const armors = document.querySelectorAll('#armorsContainer .item-row');
-            if (armors.length > 0) {
-                armors.forEach(armor => {
-                    const type = armor.querySelector('.dynamic-armor-type').value;
-                    const desc = armor.querySelector('.dynamic-armor-description').value;
-                    output += `  ・ ${type || '(種類未選択)'}: ${desc || '(詳細未入力)'} (荷重: ${armorTypes[type] || 0})\n`;
-                });
-            } else {
-                output += "  (なし)\n";
-            }
-            output += "\n";
-
-            output += "== セッション記録 ==\n";
-            const sessionLogs = document.querySelectorAll('#sessionLogsContainer .item-row');
-            if (sessionLogs.length > 0) {
-                sessionLogs.forEach((log, index) => {
-                    output += `[記録 ${index + 1}]\n`;
-                    const title = log.querySelector('.dynamic-session-title').value;
-                    const sessionScars = log.querySelector('.dynamic-session-scars').value;
-                    const sessionExp = log.querySelector('.dynamic-session-exp').value;
-                    const notes = log.querySelector('.dynamic-session-notes').value;
-                    output += `  シナリオ名: ${title || '(未入力)'}\n`;
-                    output += `  受けた傷痕: ${sessionScars || '0'}\n`;
-                    output += `  追加経験点: ${sessionExp || '0'}\n`;
-                    output += `  その他:\n${notes ? notes.split('\n').map(line => `    ${line}`).join('\n') : '    (なし)'}\n\n`;
-                });
-            } else {
-                output += "(なし)\n";
-            }
-
-            return output;
-        }
-
-        async function copyToClipboard(text) {
-            const feedbackEl = document.getElementById('copyFeedback');
-            try {
-                if (!navigator.clipboard) {
-                    // Clipboard API がサポートされていない場合のフォールバック (やや古い方法)
-                    const textArea = document.createElement("textarea");
-                    textArea.value = text;
-                    textArea.style.position = "fixed"; // 非表示にする
-                    textArea.style.left = "-9999px";
-                    document.body.appendChild(textArea);
-                    textArea.focus();
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    feedbackEl.textContent = "コピーしました！ (Legacy)";
-                    feedbackEl.style.color = "#28a745"; // 緑色
-                } else {
-                    await navigator.clipboard.writeText(text);
-                    feedbackEl.textContent = "コピーしました！";
-                    feedbackEl.style.color = "#28a745"; // 緑色
+            data.weaknesses.forEach(w => {
+                if(w) {
+                    memoLines.push(`・${w}`);
+                    hasWeakness = true;
                 }
-            } catch (err) {
-                console.error('テキストのコピーに失敗しました: ', err);
-                feedbackEl.textContent = "コピーに失敗しました。";
-                feedbackEl.style.color = "#dc3545"; // 赤色
-            }
-            setTimeout(() => { feedbackEl.textContent = ''; }, 3000); // 3秒後にメッセージを消す
-        }
+            });
+            if (!hasWeakness) memoLines.push('（弱点なし）');
+            memoLines.push('--------');
 
-        function generateAndCopyText() {
-            const formattedText = generateFormattedText();
-            copyToClipboard(formattedText);
+            memoLines.push('▼特技');
+            if (data.feats.length > 0) {
+                data.feats.forEach(f => {
+                    memoLines.push(`【${f.type}】${f.name}`);
+                    memoLines.push(f.description);
+                });
+            } else {
+                memoLines.push('（特技なし）');
+            }
+            memoLines.push('--------');
+
+            memoLines.push('▼装備');
+            if (data.weapons.length > 0) {
+                data.weapons.forEach(w => memoLines.push(`[武器] ${w.type}: ${w.description}`));
+            }
+             if (data.armors.length > 0) {
+                data.armors.forEach(a => memoLines.push(`[防具] ${a.type}: ${a.description}`));
+            }
+            if (data.weapons.length === 0 && data.armors.length === 0) {
+                memoLines.push('（装備なし）');
+            }
+            const memo = memoLines.join('\n');
+
+
+            // 3. ココフォリア用JSONオブジェクトの構築
+            // 値がNaNになるのを防ぐために、|| 0 でフォールバック
+            const scarsValue = parseInt(document.getElementById('scarsDisplay').textContent) || 0;
+            const loadValue = parseInt(document.getElementById('loadDisplay').textContent) || 0;
+
+            const cocofoliaData = {
+                kind: "character",
+                data: {
+                    name: data.characterName || '無名のキャラクター',
+                    memo: memo,
+                    // 荷重の値を負の値にしてイニシアティブに設定
+                    initiative: -loadValue,
+                    externalUrl: '',
+                    // ステータスを「ダメージ」「ストレス」「傷跡」に変更
+                    status: [
+                        { label: "ダメージ", value: 0, max: 0 },
+                        { label: "ストレス", value: 0, max: 0 },
+                        { label: "傷跡", value: scarsValue, max: 0 }
+                    ],
+                    params: [],
+                    commands: chatPalette
+                }
+            };
+            
+            // 4. クリップボードへのコピー
+            const jsonString = JSON.stringify(cocofoliaData, null, 2);
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = jsonString;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            let success = false;
+            try {
+                success = document.execCommand('copy');
+            } catch (err) {
+                console.error('クリップボードへのコピーに失敗しました', err);
+            }
+            document.body.removeChild(tempTextArea);
+
+            // 5. ユーザーへのフィードバック
+            const exportButton = document.getElementById('cocofolia-export-btn');
+            const originalText = exportButton.textContent;
+            if (success) {
+                exportButton.textContent = 'コピーしました！';
+            } else {
+                exportButton.textContent = 'コピー失敗';
+            }
+
+            setTimeout(() => {
+                exportButton.textContent = originalText;
+            }, 2000);
         }
-        // --- ★★★ 新しい関数ここまで ★★★ ---
 
     </script>
 </body>
