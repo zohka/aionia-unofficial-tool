@@ -213,39 +213,7 @@
                         <textarea id="characterSetting" onchange="updateAllStats()"></textarea>
                     </div>
                 </div>
-
-                <div class="section">
-                    <h2>装備品</h2>
-                    <label>荷重:</label>
-                    <div id="loadDisplay" class="status-display">0</div>
-                    <h3>武器</h3>
-                    <div id="weaponsContainer">
-                    </div>
-                    <button type="button" onclick="addWeapon()">武器を追加</button>
-                    <h3>防具</h3>
-                    <div id="armorsContainer">
-                    </div>
-                    <button type="button" onclick="addArmor()">防具を追加</button>
-                </div>
-
-                <div class="section">
-                    <h2>セッションの記録</h2>
-                    <div id="sessionLogsContainer">
-                    </div>
-                    <button type="button" onclick="addSessionLog()">セッション記録を追加</button>
-                </div>
-
-                <div class="section">
-                    <h2>データ管理</h2>
-                    <button type="button" onclick="exportData()">キャラクターデータをエクスポート</button>
-                    <button type="button" id="cocofolia-export-btn" onclick="exportForCocofolia()">ココフォリア駒出力</button>
-                    <label for="importFile" style="margin-top: 15px;">キャラクターデータをインポート:</label>
-                    <input type="file" id="importFile" accept=".txt" onchange="importData(event)">
-                </div>
-            </div>
-
-            <!-- 右列 -->
-            <div class="layout-column" id="right-column">
+                
                 <div class="section">
                     <h2>ステータス</h2>
                     <div class="flex-container">
@@ -293,6 +261,39 @@
                     <div id="featsContainer">
                     </div>
                     <button type="button" onclick="addFeat()">特技を追加</button>
+                </div>
+
+            </div>
+
+            <!-- 右列 -->
+            <div class="layout-column" id="right-column">
+                <div class="section">
+                    <h2>装備品</h2>
+                    <label>荷重:</label>
+                    <div id="loadDisplay" class="status-display">0</div>
+                    <h3>武器</h3>
+                    <div id="weaponsContainer">
+                    </div>
+                    <button type="button" onclick="addWeapon()">武器を追加</button>
+                    <h3>防具</h3>
+                    <div id="armorsContainer">
+                    </div>
+                    <button type="button" onclick="addArmor()">防具を追加</button>
+                </div>
+
+                <div class="section">
+                    <h2>セッションの記録</h2>
+                    <div id="sessionLogsContainer">
+                    </div>
+                    <button type="button" onclick="addSessionLog()">セッション記録を追加</button>
+                </div>
+
+                <div class="section">
+                    <h2>データ管理</h2>
+                    <button type="button" onclick="exportData()">キャラクターデータをエクスポート</button>
+                    <button type="button" id="cocofolia-export-btn" onclick="exportForCocofolia()">ココフォリア駒出力</button>
+                    <label for="importFile" style="margin-top: 15px;">キャラクターデータをインポート:</label>
+                    <input type="file" id="importFile" accept=".txt" onchange="importData(event)">
                 </div>
             </div>
         </div>
@@ -882,6 +883,7 @@
     </script>
 </body>
 </html>
+
 
 
 
