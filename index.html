@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRPGキャラクターシート</title>
+    <title>慈悲なきアイオニア　非公式ツール</title>
     <style>
         body {
             font-family: sans-serif;
@@ -13,6 +13,9 @@
             color: #f0f0f0; /* 白字 */
         }
         .container {
+            max-width: 1200px; /* 最大幅を広げて2列表示に対応 */
+            margin-left: auto;   /* 中央寄せ */
+            margin-right: auto;  /* 中央寄せ */
             background-color: #1e1e1e; /* やや明るい黒 */
             padding: 20px;
             border-radius: 8px;
@@ -41,6 +44,7 @@
             box-sizing: border-box;
             background-color: #333; /* 暗い入力欄背景 */
             color: #f0f0f0; /* 入力文字は白 */
+            font-size: 16px; /* 文字サイズを大きくする */
         }
         input[type="text"]::placeholder,
         textarea::placeholder {
@@ -66,32 +70,37 @@
             flex-grow: 1;
         }
         button {
-            background-color: #007bff; /* プライマリボタンの色 */
-            color: white;
+            background-color: transparent;
+            color: #007bff;
             padding: 10px 15px;
-            border: none;
+            border: 1px solid #007bff;
             border-radius: 4px;
             cursor: pointer;
             margin-top: 10px;
             font-size: 1em;
-            transition: background-color 0.2s ease-in-out;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #007bff;
+            color: white;
         }
         .remove-button {
-            background-color: #dc3545; /* 削除ボタンの色 */
+            color: #dc3545;
+            border-color: #dc3545;
         }
         .remove-button:hover {
-            background-color: #c82333;
+            background-color: #dc3545;
+            color: white;
         }
         /* ココフォリア出力ボタンのスタイル */
         #cocofolia-export-btn {
-            background-color: #28a745; /* Green color */
+            color: #28a745;
+            border-color: #28a745;
             margin-left: 10px;
         }
         #cocofolia-export-btn:hover {
-            background-color: #218838;
+            background-color: #28a745;
+            color: white;
         }
         .item-row {
             display: flex;
@@ -118,7 +127,6 @@
         .dynamic-feat-name + .description-field {
             margin-left: 0; /* もしflex-gapで意図しない隙間が空く場合 */
         }
-
 
         .status-display {
             font-size: 1.2em;
@@ -164,104 +172,129 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #777;
         }
+
+        /* --- 2列レイアウト用のスタイル --- */
+        .main-layout {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .layout-column {
+            flex: 1;
+            min-width: 0; /* flexアイテムの縮小問題を解決 */
+        }
+        /* 画面幅が800px以下の場合に1列にする */
+        @media (max-width: 800px) {
+            .main-layout {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>TRPGキャラクターシート</h1>
+        <h1>慈悲なきアイオニア　非公式ツール</h1>
 
-        <div class="section">
-            <h2>基本情報</h2>
-            <div>
-                <label for="characterName">キャラクター名:</label>
-                <input type="text" id="characterName" onchange="updateAllStats()">
-            </div>
-            <div>
-                <label for="characterRace">種族:</label>
-                <input type="text" id="characterRace" onchange="updateAllStats()">
-            </div>
-            <div>
-                <label for="characterSetting">キャラクター設定:</label>
-                <textarea id="characterSetting" onchange="updateAllStats()"></textarea>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>ステータス</h2>
-            <div class="flex-container">
-                <div class="flex-item">
-                    <label>経験点:</label>
-                    <div id="experiencePointsDisplay" class="status-display">100</div>
+        <div class="main-layout">
+            <!-- 左列 -->
+            <div class="layout-column" id="left-column">
+                <div class="section">
+                    <h2>基本情報</h2>
+                    <div>
+                        <label for="characterName">キャラクター名:</label>
+                        <input type="text" id="characterName" onchange="updateAllStats()">
+                    </div>
+                    <div>
+                        <label for="characterRace">種族:</label>
+                        <input type="text" id="characterRace" onchange="updateAllStats()">
+                    </div>
+                    <div>
+                        <label for="characterSetting">キャラクター設定:</label>
+                        <textarea id="characterSetting" onchange="updateAllStats()"></textarea>
+                    </div>
                 </div>
-                <div class="flex-item">
-                    <label>傷痕:</label>
-                    <div id="scarsDisplay" class="status-display">0</div>
+
+                <div class="section">
+                    <h2>装備品</h2>
+                    <label>荷重:</label>
+                    <div id="loadDisplay" class="status-display">0</div>
+                    <h3>武器</h3>
+                    <div id="weaponsContainer">
+                    </div>
+                    <button type="button" onclick="addWeapon()">武器を追加</button>
+                    <h3>防具</h3>
+                    <div id="armorsContainer">
+                    </div>
+                    <button type="button" onclick="addArmor()">防具を追加</button>
                 </div>
-                <div class="flex-item">
-                    <label for="initialScars">初期傷痕 (0-10):</label>
-                    <input type="number" id="initialScars" min="0" max="10" value="0" onchange="updateAllStats()">
+
+                <div class="section">
+                    <h2>セッションの記録</h2>
+                    <div id="sessionLogsContainer">
+                    </div>
+                    <button type="button" onclick="addSessionLog()">セッション記録を追加</button>
+                </div>
+
+                <div class="section">
+                    <h2>データ管理</h2>
+                    <button type="button" onclick="exportData()">キャラクターデータをエクスポート</button>
+                    <button type="button" id="cocofolia-export-btn" onclick="exportForCocofolia()">ココフォリア駒出力</button>
+                    <label for="importFile" style="margin-top: 15px;">キャラクターデータをインポート:</label>
+                    <input type="file" id="importFile" accept=".txt" onchange="importData(event)">
                 </div>
             </div>
-        </div>
 
-        <div class="section">
-            <h2>弱点</h2>
-            <div id="weaknessesContainer">
-            </div>
-            <button type="button" onclick="addWeakness()">弱点を追加</button>
-            <h3>初期弱点</h3>
-            <div>
-                <input type="checkbox" id="initialWeaknessCheck" onchange="toggleInitialWeaknessDescription(); updateAllStats();">
-                <label for="initialWeaknessCheck" style="display:inline;">初期弱点を負う（経験点+10）</label>
-                <input type="text" id="initialWeaknessDescription" placeholder="初期弱点の詳細" disabled onchange="updateAllStats()">
-            </div>
-        </div>
+            <!-- 右列 -->
+            <div class="layout-column" id="right-column">
+                <div class="section">
+                    <h2>ステータス</h2>
+                    <div class="flex-container">
+                        <div class="flex-item">
+                            <label>経験点:</label>
+                            <div id="experiencePointsDisplay" class="status-display">100</div>
+                        </div>
+                        <div class="flex-item">
+                            <label>傷痕:</label>
+                            <div id="scarsDisplay" class="status-display">0</div>
+                        </div>
+                        <div class="flex-item">
+                            <label for="initialScars">初期傷痕 (0-10):</label>
+                            <input type="number" id="initialScars" min="0" max="10" value="0" onchange="updateAllStats()">
+                        </div>
+                    </div>
+                </div>
 
-        <div class="section">
-            <h2>技能</h2>
-            <h3>一般技能</h3>
-            <div id="generalSkillsContainer">
-            </div>
-            <h3>専門技能</h3>
-            <div id="specialSkillsContainer">
-            </div>
-            <button type="button" onclick="addSpecialSkill()">専門技能を追加</button>
-        </div>
+                <div class="section">
+                    <h2>弱点</h2>
+                    <div id="weaknessesContainer">
+                    </div>
+                    <button type="button" onclick="addWeakness()">弱点を追加</button>
+                    <h3>初期弱点</h3>
+                    <div>
+                        <input type="checkbox" id="initialWeaknessCheck" onchange="toggleInitialWeaknessDescription(); updateAllStats();">
+                        <label for="initialWeaknessCheck" style="display:inline;">初期弱点を負う（経験点+10）</label>
+                        <input type="text" id="initialWeaknessDescription" placeholder="初期弱点の詳細" disabled onchange="updateAllStats()">
+                    </div>
+                </div>
 
-        <div class="section">
-            <h2>特技</h2>
-            <div id="featsContainer">
-            </div>
-            <button type="button" onclick="addFeat()">特技を追加</button>
-        </div>
+                <div class="section">
+                    <h2>技能</h2>
+                    <h3>一般技能</h3>
+                    <div id="generalSkillsContainer">
+                    </div>
+                    <h3>専門技能</h3>
+                    <div id="specialSkillsContainer">
+                    </div>
+                    <button type="button" onclick="addSpecialSkill()">専門技能を追加</button>
+                </div>
 
-        <div class="section">
-            <h2>装備品</h2>
-            <label>荷重:</label>
-            <div id="loadDisplay" class="status-display">0</div>
-            <h3>武器</h3>
-            <div id="weaponsContainer">
+                <div class="section">
+                    <h2>特技</h2>
+                    <div id="featsContainer">
+                    </div>
+                    <button type="button" onclick="addFeat()">特技を追加</button>
+                </div>
             </div>
-            <button type="button" onclick="addWeapon()">武器を追加</button>
-            <h3>防具</h3>
-            <div id="armorsContainer">
-            </div>
-            <button type="button" onclick="addArmor()">防具を追加</button>
-        </div>
-
-        <div class="section">
-            <h2>セッションの記録</h2>
-            <div id="sessionLogsContainer">
-            </div>
-            <button type="button" onclick="addSessionLog()">セッション記録を追加</button>
-        </div>
-
-        <div class="section">
-            <h2>データ管理</h2>
-            <button type="button" onclick="exportData()">キャラクターデータをエクスポート</button>
-            <button type="button" id="cocofolia-export-btn" onclick="exportForCocofolia()">ココフォリア駒出力</button>
-            <label for="importFile" style="margin-top: 15px;">キャラクターデータをインポート:</label>
-            <input type="file" id="importFile" accept=".txt" onchange="importData(event)">
         </div>
     </div>
 
@@ -806,11 +839,11 @@
                     // 荷重の値を負の値にしてイニシアティブに設定
                     initiative: -loadValue,
                     externalUrl: '',
-                    // ステータスを「ダメージ」「ストレス」「傷痕」に変更
+                    // ステータスを「ダメージ」「ストレス」「傷跡」に変更
                     status: [
                         { label: "ダメージ", value: 0, max: 0 },
                         { label: "ストレス", value: 0, max: 0 },
-                        { label: "傷痕", value: scarsValue, max: 0 }
+                        { label: "傷跡", value: scarsValue, max: 0 }
                     ],
                     params: [],
                     commands: chatPalette
@@ -849,3 +882,6 @@
     </script>
 </body>
 </html>
+
+
+
