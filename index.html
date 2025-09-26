@@ -198,6 +198,12 @@
             .main-layout {
                 flex-direction: column;
             }
+            /* ===== 修正箇所 ===== */
+            /* 1カラム表示の際に、カラムが親要素の幅いっぱいに広がるように設定 */
+            .layout-column {
+                width: 100%;
+            }
+            /* ==================== */
         }
 
         /* --- 経験点トラッカーのスタイル --- */
@@ -264,7 +270,7 @@
                         <textarea id="characterSetting" onchange="updateAllStats()"></textarea>
                     </div>
                 </div>
-                            
+                        
                 <div class="section">
                     <h2>ステータス</h2>
                     <div class="flex-container">
@@ -874,19 +880,19 @@
             // ダメージ判定を追加
             const weaponTypesInUse = new Set(data.weapons.map(w => w.type));
             if (weaponTypesInUse.size > 0) {
-                  paletteLines.push('// ----- ダメージ判定 -----');
-                  if (weaponTypesInUse.has("小型白兵武器")) {
+                paletteLines.push('// ----- ダメージ判定 -----');
+                if (weaponTypesInUse.has("小型白兵武器")) {
                     paletteLines.push('1d4+1 〈ダメージ判定：小型白兵武器〉');
-                  }
-                  if (weaponTypesInUse.has("中型白兵武器")) {
+                }
+                if (weaponTypesInUse.has("中型白兵武器")) {
                     paletteLines.push('1d6+1 〈ダメージ判定：中型白兵武器〉');
-                  }
-                  if (weaponTypesInUse.has("大型白兵武器")) {
+                }
+                if (weaponTypesInUse.has("大型白兵武器")) {
                     paletteLines.push('1d10 〈ダメージ判定：大型白兵武器〉');
-                  }
-                  if (weaponTypesInUse.has("射撃武器")) {
+                }
+                if (weaponTypesInUse.has("射撃武器")) {
                     paletteLines.push('1d8 〈ダメージ判定：射撃武器〉');
-                  }
+                }
             }
 
             // ダメージ軽減判定の追加
@@ -1005,4 +1011,3 @@
     </script>
 </body>
 </html>
-
