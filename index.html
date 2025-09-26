@@ -5,53 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>慈悲なきアイオニア　非公式ツール</title>
     <style>
+        /* General Body and Container Styles */
         body {
             font-family: sans-serif;
             line-height: 1.6;
-            margin: 20px;
-            background-color: #121212; /* 黒背景 */
-            color: #f0f0f0; /* 白字 */
+            margin: 0;
+            padding: 20px;
+            background-color: #121212;
+            color: #f0f0f0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         .container {
-            max-width: 1200px; /* 最大幅を広げて2列表示に対応 */
-            margin-left: auto;   /* 中央寄せ */
-            margin-right: auto;  /* 中央寄せ */
-            background-color: #1e1e1e; /* やや明るい黒 */
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: #1e1e1e;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 15px rgba(255,255,255,0.05); /* 白い影を薄く */
+            box-shadow: 0 0 15px rgba(255,255,255,0.05);
         }
+
+        /* Heading Styles */
         h1, h2, h3 {
-            color: #e0e0e0; /* やや明るい白 */
-            border-bottom: 2px solid #444; /* 暗めのボーダー */
+            color: #e0e0e0;
+            border-bottom: 2px solid #444;
             padding-bottom: 5px;
         }
-        h1{
-            font-size: 18px; /* h1タグの文字サイズを15ピクセルに設定 */
+        h1 {
+            font-size: 1.25rem;
         }
+
+        /* Form Element Styles */
         label {
             display: block;
             margin-top: 10px;
             font-weight: bold;
-            color: #cccccc; /* ややグレーがかった白 */
+            color: #cccccc;
         }
         input[type="text"],
         input[type="number"],
         textarea,
         select {
-            width: calc(100% - 22px);
+            width: 100%;
             padding: 10px;
             margin-top: 5px;
-            border: 1px solid #555; /* 暗めのボーダー */
+            border: 1px solid #555;
             border-radius: 4px;
             box-sizing: border-box;
-            background-color: #333; /* 暗い入力欄背景 */
-            color: #f0f0f0; /* 入力文字は白 */
-            font-size: 16px; /* 文字サイズを大きくする */
-        }
-        input[type="text"]::placeholder,
-        textarea::placeholder {
-            color: #aaa; /* プレースホルダーの色 */
+            background-color: #333;
+            color: #f0f0f0;
+            font-size: 1rem;
         }
         textarea {
             height: 100px;
@@ -60,18 +64,10 @@
         input[type="checkbox"] {
             margin-right: 5px;
             vertical-align: middle;
-            accent-color: #007bff; /* チェックボックスの色はアクセントカラー */
+            accent-color: #007bff;
         }
-        .inline-inputs {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .inline-inputs input[type="text"],
-        .inline-inputs select {
-            width: auto;
-            flex-grow: 1;
-        }
+
+        /* Button Styles */
         button {
             background-color: transparent;
             color: #007bff;
@@ -90,19 +86,17 @@
         .remove-button {
             color: #dc3545;
             border-color: #dc3545;
-            /* --- Style adjustments for a smaller 'x' button --- */
-            padding: 2px 10px;      /* Reduced padding */
-            font-size: 1.2em;       /* Make the '×' character a bit larger and clearer */
+            padding: 2px 10px;
+            font-size: 1.2em;
             font-weight: bold;
-            line-height: 1;         /* Center the '×' vertically */
-            min-width: auto;        /* Let the size be determined by content and padding */
-            flex-shrink: 0;         /* Prevent shrinking in flex containers */
+            line-height: 1;
+            min-width: auto;
+            flex-shrink: 0;
         }
         .remove-button:hover {
             background-color: #dc3545;
             color: white;
         }
-        /* ココフォリア出力ボタンのスタイル */
         #cocofolia-export-btn {
             color: #28a745;
             border-color: #28a745;
@@ -112,78 +106,14 @@
             background-color: #28a745;
             color: white;
         }
-        .item-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #444; /* 暗めのボーダー */
-            border-radius: 4px;
-            background-color: #2a2a2a; /* アイテム行の背景 */
-            flex-wrap: wrap; /* 要素の折り返しを許可 */
-        }
-        .item-row select { flex-basis: 150px; flex-shrink: 0; }
-        .item-row input[type="text"] { flex-grow: 1; } /* デフォルトで横に伸びる */
-        .item-row input[type="checkbox"] { flex-basis: 20px; flex-shrink: 0; }
-        .item-row button { margin-top: 0; }
 
-        /* 説明欄用スタイル */
-        .description-field {
-            flex-basis: 100% !important; /* 親要素の幅全体を占める */
-            margin-top: 8px; /* 上の要素との間に少し余白 */
-        }
-        /* 特技の名称と説明の間の調整 */
-        .dynamic-feat-name + .description-field {
-            margin-left: 0; /* もしflex-gapで意図しない隙間が空く場合 */
-        }
-
-        .status-display {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 5px;
-            color: #00aaff; /* ステータス表示のアクセントカラー */
-        }
+        /* Layout Styles */
         .section {
             margin-bottom: 30px;
             padding: 15px;
-            background-color: #252525; /* セクションの背景 */
+            background-color: #252525;
             border-radius: 5px;
         }
-        .flex-container {
-            display: flex;
-            gap: 20px;
-        }
-        .flex-item {
-            flex: 1;
-        }
-        #initialWeaknessDescription {
-            background-color: #404040; /* 非アクティブ時の背景色 */
-            color: #888; /* 非アクティブ時の文字色 */
-        }
-        #initialWeaknessDescription:not(:disabled) {
-            background-color: #333; /* アクティブ時の背景色 */
-            color: #f0f0f0; /* アクティブ時の文字色 */
-        }
-        input[type="file"] {
-            color: #ccc; /* ファイル選択の文字色 */
-        }
-        /* スクロールバーのスタイル（オプション、ブラウザによる） */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #2c2c2c;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #777;
-        }
-
-        /* --- 2列レイアウト用のスタイル --- */
         .main-layout {
             display: flex;
             gap: 20px;
@@ -191,20 +121,94 @@
         }
         .layout-column {
             flex: 1;
-            min-width: 0; /* flexアイテムの縮小問題を解決 */
+            min-width: 0; /* Prevents flex items from overflowing */
         }
-        /* 画面幅が800px以下の場合に1列にする */
-        @media (max-width: 800px) {
-            .main-layout {
-                flex-direction: column;
-            }
+        .flex-container {
+            display: flex;
+            gap: 20px;
+        }
+        .flex-item {
+            flex: 1;
+            min-width: 0;
         }
 
-        /* --- 経験点トラッカーのスタイル --- */
+        /* Dynamic Item Rows (Weapons, Skills, etc.) */
+        .item-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #2a2a2a;
+            flex-wrap: wrap; /* Key for responsiveness */
+        }
+        .item-row select { 
+            flex: 1 1 130px; /* Grow, shrink, basis */
+        }
+        .item-row input[type="text"] { 
+            flex: 2 1 150px; /* Grow more than select */
+        }
+        .item-row .remove-button {
+            margin-left: auto; /* Push to the far right */
+        }
+        
+        /* Specific Row Styles for "Feats" */
+        .feat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .feat-controls {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .feat-controls > * {
+            flex: 1 1 120px; /* Allow wrapping */
+        }
+        .description-field {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        /* Specific styles for session logs */
+        .session-log-row {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .session-log-inputs {
+             display: flex;
+             gap: 10px;
+             align-items: center;
+             flex-wrap: wrap;
+             margin-top: 8px;
+             margin-bottom: 8px;
+        }
+        .session-log-inputs label {
+            margin-top: 0;
+            flex-shrink: 0;
+        }
+        .session-log-inputs input[type="number"] {
+            width: 70px;
+        }
+
+
+        /* Status & Trackers */
+        .status-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 5px;
+            color: #00aaff;
+        }
         #experience-tracker {
             position: fixed;
             bottom: 20px;
-            left: 20px; /* 位置を左に変更 */
+            left: 20px;
             background-color: rgba(30, 30, 30, 0.9);
             color: #e0e0e0;
             padding: 12px 18px;
@@ -214,15 +218,15 @@
             font-size: 1.1em;
             font-weight: bold;
             border: 1px solid #444;
-            backdrop-filter: blur(5px); /* モダンブラウザ用の背景ぼかし効果 */
+            backdrop-filter: blur(5px);
         }
 
-        /* --- Collapsible sections --- */
+        /* Collapsible Sections */
         .collapsible-header {
             cursor: pointer;
             user-select: none;
-            position: relative; /* For positioning the pseudo-element */
-            padding-right: 25px; /* Make space for the indicator */
+            position: relative;
+            padding-right: 25px;
         }
         .collapsible-header::after {
             content: "∧";
@@ -234,11 +238,15 @@
             color: #00aaff;
             transition: transform 0.2s ease;
         }
-        .collapsible-header.collapsed::after {
-            content: "∨";
-        }
-        .collapsible-content.hidden {
-            display: none;
+        .collapsible-header.collapsed::after { content: "∨"; }
+        .collapsible-content.hidden { display: none; }
+        
+        /* Media Query for single column layout */
+        @media (max-width: 800px) {
+            body { padding: 10px; }
+            .main-layout {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -247,7 +255,7 @@
         <h1>慈悲なきアイオニア　非公式ツール</h1>
 
         <div class="main-layout">
-            <!-- 左列 -->
+            <!-- Left Column -->
             <div class="layout-column" id="left-column">
                 <div class="section">
                     <h2>基本情報</h2>
@@ -286,8 +294,7 @@
                 <div class="section">
                     <h2 class="collapsible-header collapsed" onclick="toggleSection('weaknessesContent')">弱点</h2>
                     <div id="weaknessesContent" class="collapsible-content hidden">
-                        <div id="weaknessesContainer">
-                        </div>
+                        <div id="weaknessesContainer"></div>
                         <button type="button" onclick="addWeakness()">弱点を追加</button>
                         <h3>初期弱点</h3>
                         <div>
@@ -302,11 +309,9 @@
                     <h2 class="collapsible-header collapsed" onclick="toggleSection('skillsContent')">技能</h2>
                     <div id="skillsContent" class="collapsible-content hidden">
                         <h3>一般技能</h3>
-                        <div id="generalSkillsContainer">
-                        </div>
+                        <div id="generalSkillsContainer"></div>
                         <h3>専門技能</h3>
-                        <div id="specialSkillsContainer">
-                        </div>
+                        <div id="specialSkillsContainer"></div>
                         <button type="button" onclick="addSpecialSkill()">専門技能を追加</button>
                     </div>
                 </div>
@@ -314,14 +319,13 @@
                 <div class="section">
                     <h2 class="collapsible-header collapsed" onclick="toggleSection('featsContent')">特技</h2>
                     <div id="featsContent" class="collapsible-content hidden">
-                        <div id="featsContainer">
-                        </div>
+                        <div id="featsContainer"></div>
                         <button type="button" onclick="addFeat()">特技を追加</button>
                     </div>
                 </div>
             </div>
 
-            <!-- 右列 -->
+            <!-- Right Column -->
             <div class="layout-column" id="right-column">
                 <div class="section">
                     <h2 class="collapsible-header collapsed" onclick="toggleSection('equipmentContent')">装備品</h2>
@@ -329,12 +333,10 @@
                         <label>荷重:</label>
                         <div id="loadDisplay" class="status-display">0</div>
                         <h3>武器</h3>
-                        <div id="weaponsContainer">
-                        </div>
+                        <div id="weaponsContainer"></div>
                         <button type="button" onclick="addWeapon()">武器を追加</button>
                         <h3>防具</h3>
-                        <div id="armorsContainer">
-                        </div>
+                        <div id="armorsContainer"></div>
                         <button type="button" onclick="addArmor()">防具を追加</button>
                     </div>
                 </div>
@@ -342,8 +344,7 @@
                 <div class="section">
                     <h2 class="collapsible-header collapsed" onclick="toggleSection('sessionLogsContent')">セッションの記録</h2>
                     <div id="sessionLogsContent" class="collapsible-content hidden">
-                        <div id="sessionLogsContainer">
-                        </div>
+                        <div id="sessionLogsContainer"></div>
                         <button type="button" onclick="addSessionLog()">セッション記録を追加</button>
                     </div>
                 </div>
@@ -359,56 +360,37 @@
         </div>
     </div>
 
-    <!-- 経験点トラッカー -->
+    <!-- Experience Tracker -->
     <div id="experience-tracker">
         経験点: <span id="experience-tracker-value">100</span>
     </div>
 
 
     <script>
-        // 初期値
-        let experiencePoints = 100;
-        let scars = 0;
-        let load = 0;
-
+        // --- Constants and Initial Values ---
         const generalSkillNames = ["運動", "回避", "感覚", "観察", "技巧", "射撃", "社交", "知識", "白兵", "防御"];
         const specialSkillBaseTypes = ["運動", "感覚", "観察", "技巧", "射撃", "社交", "知識", "白兵"];
         const featTypes = ["戦術", "魔術", "特徴"];
-        const weaponTypes = {
-            "小型白兵武器": 1,
-            "中型白兵武器": 3,
-            "大型白兵武器": 5,
-            "射撃武器": 2,
-            "魔術触媒": 1
-        };
-        const armorTypes = {
-            "軽装防具": 2,
-            "重装防具": 5
-        };
+        const weaponTypes = { "小型白兵武器": 1, "中型白兵武器": 3, "大型白兵武器": 5, "射撃武器": 2, "魔術触媒": 1 };
+        const armorTypes = { "軽装防具": 2, "重装防具": 5 };
 
-        // 初期化処理
+        // --- Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
             populateGeneralSkills();
             updateAllStats();
         });
 
-        // --- セクション表示切替関数 ---
+        // --- UI Functions ---
         function toggleSection(contentId) {
             const content = document.getElementById(contentId);
-            const header = content.previousElementSibling; // h2タグを取得
-
-            if (content.classList.contains('hidden')) {
-                content.classList.remove('hidden');
-                header.classList.remove('collapsed');
-            } else {
-                content.classList.add('hidden');
-                header.classList.add('collapsed');
-            }
+            const header = content.previousElementSibling;
+            content.classList.toggle('hidden');
+            header.classList.toggle('collapsed');
         }
 
         function populateGeneralSkills() {
             const container = document.getElementById('generalSkillsContainer');
-            container.innerHTML = ''; // 既存の要素をクリア
+            container.innerHTML = '';
             generalSkillNames.forEach(skillName => {
                 const div = document.createElement('div');
                 const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
@@ -425,200 +407,159 @@
             const descriptionInput = document.getElementById('initialWeaknessDescription');
             descriptionInput.disabled = !checkbox.checked;
             if (!checkbox.checked) {
-                descriptionInput.value = ''; // チェックが外れたら内容をクリア
+                descriptionInput.value = '';
             }
         }
 
-        // --- 追加・削除関数 ---
+        // --- Dynamic Item Functions (Add/Remove) ---
         function addDynamicItem(containerId, createRowFunction) {
             const container = document.getElementById(containerId);
-            const newItemRow = createRowFunction(container.children.length);
+            const newItemRow = createRowFunction();
             container.appendChild(newItemRow);
             updateAllStats();
         }
 
         function removeDynamicItem(buttonElement) {
-            const itemRow = buttonElement.closest('.item-row');
-            if(itemRow) {
-                itemRow.remove();
-                updateAllStats();
-            }
+            buttonElement.closest('.item-row, .session-log-row').remove();
+            updateAllStats();
         }
 
         function addWeakness() {
-            addDynamicItem('weaknessesContainer', (index) => {
+            addDynamicItem('weaknessesContainer', () => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
                 div.innerHTML = `
                     <input type="text" placeholder="弱点の詳細" class="dynamic-weakness" onchange="updateAllStats()">
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">×</button>
                 `;
                 return div;
             });
         }
 
         function addSpecialSkill() {
-            addDynamicItem('specialSkillsContainer', (index) => {
+            addDynamicItem('specialSkillsContainer', () => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
-                let optionsHtml = specialSkillBaseTypes.map(type => `<option value="${type}">${type}</option>`).join('');
+                const optionsHtml = specialSkillBaseTypes.map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
-                    <select class="dynamic-special-skill-type" onchange="updateAllStats()"></select>
+                    <select class="dynamic-special-skill-type" onchange="updateAllStats()">${optionsHtml}</select>
                     <input type="text" placeholder="専門技能名・詳細" class="dynamic-special-skill-name" onchange="updateAllStats()">
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">×</button>
                 `;
-                div.querySelector('.dynamic-special-skill-type').innerHTML = optionsHtml;
                 return div;
             });
         }
 
         function addFeat() {
-            addDynamicItem('featsContainer', (index) => {
+            addDynamicItem('featsContainer', () => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
-                let typeOptionsHtml = featTypes.map(type => `<option value="${type}">${type}</option>`).join('');
+                const typeOptionsHtml = featTypes.map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                        <label style="margin-top:0; display:flex; align-items:center; font-weight:normal; color: #f0f0f0; font-size: 0.9em; white-space: nowrap;">
-                            <input type="checkbox" class="dynamic-feat-reward" onchange="updateAllStats()" style="margin-right:5px;"> シナリオ報酬
+                    <div class="feat-header">
+                        <label style="margin-top:0; display:flex; align-items:center; font-weight:normal;">
+                            <input type="checkbox" class="dynamic-feat-reward" onchange="updateAllStats()"> シナリオ報酬
                         </label>
                         <button type="button" class="remove-button" onclick="removeDynamicItem(this)">×</button>
                     </div>
-                    <select class="dynamic-feat-type" style="flex-basis: 90px; margin-top: 8px;" onchange="updateAllStats()"></select>
-                    <input type="text" placeholder="特技名" class="dynamic-feat-name" style="flex-grow: 1; margin-top: 8px;" onchange="updateAllStats()">
-                    <textarea placeholder="特技説明" class="dynamic-feat-description description-field" style="height: 60px;" onchange="updateAllStats()"></textarea>
+                    <div class="feat-controls">
+                        <select class="dynamic-feat-type" onchange="updateAllStats()">${typeOptionsHtml}</select>
+                        <input type="text" placeholder="特技名" class="dynamic-feat-name" onchange="updateAllStats()">
+                    </div>
+                    <textarea placeholder="特技説明" class="dynamic-feat-description description-field" onchange="updateAllStats()"></textarea>
                 `;
-                div.querySelector('.dynamic-feat-type').innerHTML = typeOptionsHtml;
                 return div;
             });
         }
-
+        
         function addWeapon() {
-            addDynamicItem('weaponsContainer', (index) => {
+            addDynamicItem('weaponsContainer', () => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
-                let optionsHtml = Object.keys(weaponTypes).map(type => `<option value="${type}">${type}</option>`).join('');
+                const optionsHtml = Object.keys(weaponTypes).map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
-                    <select class="dynamic-weapon-type" onchange="updateAllStats()"></select>
+                    <select class="dynamic-weapon-type" onchange="updateAllStats()">${optionsHtml}</select>
                     <input type="text" placeholder="武器名・詳細" class="dynamic-weapon-description" onchange="updateAllStats()">
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">×</button>
                 `;
-                div.querySelector('.dynamic-weapon-type').innerHTML = optionsHtml;
                 return div;
             });
         }
 
         function addArmor() {
-            addDynamicItem('armorsContainer', (index) => {
+            addDynamicItem('armorsContainer', () => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
-                let optionsHtml = Object.keys(armorTypes).map(type => `<option value="${type}">${type}</option>`).join('');
+                const optionsHtml = Object.keys(armorTypes).map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
-                    <select class="dynamic-armor-type" onchange="updateAllStats()"></select>
+                    <select class="dynamic-armor-type" onchange="updateAllStats()">${optionsHtml}</select>
                     <input type="text" placeholder="防具名・詳細" class="dynamic-armor-description" onchange="updateAllStats()">
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">×</button>
                 `;
-                div.querySelector('.dynamic-armor-type').innerHTML = optionsHtml;
                 return div;
             });
         }
 
         function addSessionLog() {
-            addDynamicItem('sessionLogsContainer', (index) => {
+            addDynamicItem('sessionLogsContainer', () => {
                 const div = document.createElement('div');
-                div.className = 'item-row';
-                div.style.flexDirection = 'column';
-                div.style.alignItems = 'stretch';
+                div.className = 'item-row session-log-row';
                 div.innerHTML = `
-                    <input type="text" placeholder="シナリオ名" class="dynamic-session-title" onchange="updateAllStats()">
-                    <div class="inline-inputs" style="margin-top:5px;">
-                        <label style="margin-top:0; flex-basis:100px; font-size: 0.9em;">受けた傷痕:</label>
-                        <input type="number" value="0" class="dynamic-session-scars" onchange="updateAllStats()" style="width:55px;">
-                        <label style="margin-top:0; flex-basis:100px; margin-left:10px; font-size: 0.9em;">追加経験点:</label>
-                        <input type="number" value="0" class="dynamic-session-exp" onchange="updateAllStats()" style="width:55px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <input type="text" placeholder="シナリオ名" class="dynamic-session-title" onchange="updateAllStats()" style="flex-grow: 1; margin: 0;">
+                        <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: 10px;">×</button>
                     </div>
-                    <textarea placeholder="その他記録" class="dynamic-session-notes" style="margin-top:5px;" onchange="updateAllStats()"></textarea>
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="align-self:flex-end;">×</button>
+                    <div class="session-log-inputs">
+                        <label>受けた傷痕:</label>
+                        <input type="number" value="0" class="dynamic-session-scars" onchange="updateAllStats()">
+                        <label style="margin-left:10px;">追加経験点:</label>
+                        <input type="number" value="0" class="dynamic-session-exp" onchange="updateAllStats()">
+                    </div>
+                    <textarea placeholder="その他記録" class="dynamic-session-notes" onchange="updateAllStats()"></textarea>
                 `;
                 return div;
             });
         }
 
-
-        // --- ステータス更新関数 ---
+        // --- Stat Calculation ---
         function updateAllStats() {
-            // 経験点計算
-            let currentExperience = 100;
-            const initialScarsValue = parseInt(document.getElementById('initialScars').value) || 0;
-            currentExperience += initialScarsValue;
-
-            if (document.getElementById('initialWeaknessCheck').checked) {
-                currentExperience += 10;
-            }
-
-            let generalSkillsChecked = 0;
-            generalSkillNames.forEach(skillName => {
-                const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
-                if (document.getElementById(checkboxId) && document.getElementById(checkboxId).checked) {
-                    generalSkillsChecked++;
-                }
-            });
+            // Experience Points
+            let currentExperience = 100 + (parseInt(document.getElementById('initialScars').value) || 0);
+            if (document.getElementById('initialWeaknessCheck').checked) currentExperience += 10;
+            
+            let generalSkillsChecked = Array.from(document.querySelectorAll('#generalSkillsContainer input[type="checkbox"]')).filter(cb => cb.checked).length;
             currentExperience -= generalSkillsChecked * 10;
-
-            const specialSkillRows = document.querySelectorAll('#specialSkillsContainer .item-row');
-            currentExperience -= specialSkillRows.length * 5;
-
-            const featRows = document.querySelectorAll('#featsContainer .item-row');
-            currentExperience -= featRows.length * 5;
-            featRows.forEach(row => {
-                if (row.querySelector('.dynamic-feat-reward') && row.querySelector('.dynamic-feat-reward').checked) {
-                    currentExperience += 5;
-                }
+            currentExperience -= document.querySelectorAll('#specialSkillsContainer .item-row').length * 5;
+            
+            document.querySelectorAll('#featsContainer .item-row').forEach(row => {
+                currentExperience -= row.querySelector('.dynamic-feat-reward').checked ? 0 : 5;
             });
 
             document.querySelectorAll('.dynamic-session-exp').forEach(input => {
                 currentExperience += parseInt(input.value) || 0;
             });
+            document.getElementById('experiencePointsDisplay').textContent = currentExperience;
+            document.getElementById('experience-tracker-value').textContent = currentExperience;
 
-            experiencePoints = currentExperience;
-            document.getElementById('experiencePointsDisplay').textContent = experiencePoints;
-            // ★追記: 画面右下の経験点トラッカーも更新
-            document.getElementById('experience-tracker-value').textContent = experiencePoints;
-
-            // 傷痕計算
-            let currentScars = 0;
-            currentScars += initialScarsValue;
+            // Scars
+            let currentScars = parseInt(document.getElementById('initialScars').value) || 0;
             document.querySelectorAll('.dynamic-session-scars').forEach(input => {
                 currentScars += parseInt(input.value) || 0;
             });
-            scars = currentScars;
-            document.getElementById('scarsDisplay').textContent = scars;
+            document.getElementById('scarsDisplay').textContent = currentScars;
 
-            // 荷重計算
+            // Load
             let currentLoad = 0;
-            document.querySelectorAll('#weaponsContainer .item-row').forEach(row => {
-                const typeElement = row.querySelector('.dynamic-weapon-type');
-                if (typeElement) {
-                    const type = typeElement.value;
-                    if (weaponTypes[type]) {
-                        currentLoad += weaponTypes[type];
-                    }
-                }
+            document.querySelectorAll('#weaponsContainer .dynamic-weapon-type').forEach(sel => {
+                currentLoad += weaponTypes[sel.value] || 0;
             });
-            document.querySelectorAll('#armorsContainer .item-row').forEach(row => {
-                const typeElement = row.querySelector('.dynamic-armor-type');
-                if (typeElement) {
-                    const type = typeElement.value;
-                    if (armorTypes[type]) {
-                        currentLoad += armorTypes[type];
-                    }
-                }
+            document.querySelectorAll('#armorsContainer .dynamic-armor-type').forEach(sel => {
+                currentLoad += armorTypes[sel.value] || 0;
             });
-            load = currentLoad;
-            document.getElementById('loadDisplay').textContent = load;
+            document.getElementById('loadDisplay').textContent = currentLoad;
         }
 
-        // --- データエクスポート/インポート ---
+        // --- Data Import/Export ---
         function gatherData() {
             const data = {
                 characterName: document.getElementById('characterName').value,
@@ -627,95 +568,40 @@
                 initialScars: document.getElementById('initialScars').value,
                 initialWeaknessCheck: document.getElementById('initialWeaknessCheck').checked,
                 initialWeaknessDescription: document.getElementById('initialWeaknessDescription').value,
-                generalSkills: {},
-                weaknesses: [],
-                specialSkills: [],
-                feats: [],
-                weapons: [],
-                armors: [],
-                sessionLogs: []
+                generalSkills: Object.fromEntries(generalSkillNames.map(name => [name, document.getElementById(`generalSkill_${name.replace(/\s/g, '')}`).checked])),
+                weaknesses: Array.from(document.querySelectorAll('.dynamic-weakness')).map(el => el.value),
+                specialSkills: Array.from(document.querySelectorAll('#specialSkillsContainer .item-row')).map(row => ({ type: row.querySelector('.dynamic-special-skill-type').value, name: row.querySelector('.dynamic-special-skill-name').value })),
+                feats: Array.from(document.querySelectorAll('#featsContainer .item-row')).map(row => ({ type: row.querySelector('.dynamic-feat-type').value, name: row.querySelector('.dynamic-feat-name').value, description: row.querySelector('.dynamic-feat-description').value, reward: row.querySelector('.dynamic-feat-reward').checked })),
+                weapons: Array.from(document.querySelectorAll('#weaponsContainer .item-row')).map(row => ({ type: row.querySelector('.dynamic-weapon-type').value, description: row.querySelector('.dynamic-weapon-description').value })),
+                armors: Array.from(document.querySelectorAll('#armorsContainer .item-row')).map(row => ({ type: row.querySelector('.dynamic-armor-type').value, description: row.querySelector('.dynamic-armor-description').value })),
+                sessionLogs: Array.from(document.querySelectorAll('.session-log-row')).map(row => ({ title: row.querySelector('.dynamic-session-title').value, scars: row.querySelector('.dynamic-session-scars').value, exp: row.querySelector('.dynamic-session-exp').value, notes: row.querySelector('.dynamic-session-notes').value }))
             };
-
-            generalSkillNames.forEach(skillName => {
-                const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
-                if (document.getElementById(checkboxId)) {
-                    data.generalSkills[skillName] = document.getElementById(checkboxId).checked;
-                }
-            });
-
-            document.querySelectorAll('#weaknessesContainer .item-row .dynamic-weakness').forEach(input => {
-                data.weaknesses.push(input.value);
-            });
-
-            document.querySelectorAll('#specialSkillsContainer .item-row').forEach(row => {
-                data.specialSkills.push({
-                    type: row.querySelector('.dynamic-special-skill-type').value,
-                    name: row.querySelector('.dynamic-special-skill-name').value
-                });
-            });
-
-            document.querySelectorAll('#featsContainer .item-row').forEach(row => {
-                data.feats.push({
-                    type: row.querySelector('.dynamic-feat-type').value,
-                    name: row.querySelector('.dynamic-feat-name').value,
-                    description: row.querySelector('.dynamic-feat-description').value,
-                    reward: row.querySelector('.dynamic-feat-reward').checked
-                });
-            });
-
-            document.querySelectorAll('#weaponsContainer .item-row').forEach(row => {
-                data.weapons.push({
-                    type: row.querySelector('.dynamic-weapon-type').value,
-                    description: row.querySelector('.dynamic-weapon-description').value
-                });
-            });
-
-            document.querySelectorAll('#armorsContainer .item-row').forEach(row => {
-                data.armors.push({
-                    type: row.querySelector('.dynamic-armor-type').value,
-                    description: row.querySelector('.dynamic-armor-description').value
-                });
-            });
-
-            document.querySelectorAll('#sessionLogsContainer .item-row').forEach(row => {
-                data.sessionLogs.push({
-                    title: row.querySelector('.dynamic-session-title').value,
-                    scars: row.querySelector('.dynamic-session-scars').value,
-                    exp: row.querySelector('.dynamic-session-exp').value,
-                    notes: row.querySelector('.dynamic-session-notes').value
-                });
-            });
             return data;
         }
 
         function exportData() {
             const data = gatherData();
-            const jsonData = JSON.stringify(data, null, 2);
-            const blob = new Blob([jsonData], { type: 'text/plain' });
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            const charName = document.getElementById('characterName').value || "character";
-            a.download = `${charName}_sheet.txt`;
-            document.body.appendChild(a);
+            a.download = `${data.characterName || "character"}_sheet.txt`;
             a.click();
-            document.body.removeChild(a);
             URL.revokeObjectURL(url);
+            a.remove();
         }
 
         function importData(event) {
             const file = event.target.files[0];
-            if (!file) {
-                return;
-            }
+            if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
                     applyData(data);
                 } catch (error) {
-                    console.error("インポートエラー:", error);
-                    alert("ファイルの読み込みに失敗しました。正しい形式のファイルを選択してください。");
+                    console.error("Import Error:", error);
+                    alert("ファイルの読み込みに失敗しました。");
                 }
             };
             reader.readAsText(file);
@@ -723,6 +609,12 @@
         }
 
         function applyData(data) {
+            // Clear existing dynamic data
+            ['weaknessesContainer', 'specialSkillsContainer', 'featsContainer', 'weaponsContainer', 'armorsContainer', 'sessionLogsContainer'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+
+            // Apply basic info
             document.getElementById('characterName').value = data.characterName || '';
             document.getElementById('characterRace').value = data.characterRace || '';
             document.getElementById('characterSetting').value = data.characterSetting || '';
@@ -731,281 +623,99 @@
             document.getElementById('initialWeaknessDescription').value = data.initialWeaknessDescription || '';
             toggleInitialWeaknessDescription();
 
+            // Apply dynamic items
             if (data.generalSkills) {
-                generalSkillNames.forEach(skillName => {
-                    const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
-                    if (document.getElementById(checkboxId)) {
-                        document.getElementById(checkboxId).checked = data.generalSkills[skillName] || false;
-                    }
-                });
-            } else {
-                populateGeneralSkills();
+                for (const [name, checked] of Object.entries(data.generalSkills)) {
+                    const cb = document.getElementById(`generalSkill_${name.replace(/\s/g, '')}`);
+                    if (cb) cb.checked = checked;
+                }
             }
-
-            const containersToClear = ['weaknessesContainer', 'specialSkillsContainer', 'featsContainer', 'weaponsContainer', 'armorsContainer', 'sessionLogsContainer'];
-            containersToClear.forEach(id => document.getElementById(id).innerHTML = '');
-
-            if (data.weaknesses) {
-                data.weaknesses.forEach(text => {
-                    addWeakness();
-                    const rows = document.querySelectorAll('#weaknessesContainer .item-row');
-                    const lastRowInput = rows[rows.length - 1].querySelector('.dynamic-weakness');
-                    if (lastRowInput) lastRowInput.value = text;
-                });
-            }
-
-            if (data.specialSkills) {
-                data.specialSkills.forEach(skill => {
-                    addSpecialSkill();
-                    const rows = document.querySelectorAll('#specialSkillsContainer .item-row');
-                    const lastRow = rows[rows.length - 1];
-                    if (lastRow) {
-                        const typeSelect = lastRow.querySelector('.dynamic-special-skill-type');
-                        const nameInput = lastRow.querySelector('.dynamic-special-skill-name');
-                        if (typeSelect) typeSelect.value = skill.type;
-                        if (nameInput) nameInput.value = skill.name;
-                    }
-                });
-            }
-
-            if (data.feats) {
-                data.feats.forEach(feat => {
-                    addFeat();
-                    const rows = document.querySelectorAll('#featsContainer .item-row');
-                    const lastRow = rows[rows.length - 1];
-                    if (lastRow) {
-                        const typeSelect = lastRow.querySelector('.dynamic-feat-type');
-                        const nameInput = lastRow.querySelector('.dynamic-feat-name');
-                        const descTextarea = lastRow.querySelector('.dynamic-feat-description');
-                        const rewardCheckbox = lastRow.querySelector('.dynamic-feat-reward');
-                        if (typeSelect) typeSelect.value = feat.type;
-                        if (nameInput) nameInput.value = feat.name;
-                        if (descTextarea) descTextarea.value = feat.description;
-                        if (rewardCheckbox) rewardCheckbox.checked = feat.reward;
-                    }
-                });
-            }
-
-            if (data.weapons) {
-                data.weapons.forEach(weapon => {
-                    addWeapon();
-                    const rows = document.querySelectorAll('#weaponsContainer .item-row');
-                    const lastRow = rows[rows.length - 1];
-                    if (lastRow) {
-                        const typeSelect = lastRow.querySelector('.dynamic-weapon-type');
-                        const descInput = lastRow.querySelector('.dynamic-weapon-description');
-                        if (typeSelect) typeSelect.value = weapon.type;
-                        if (descInput) descInput.value = weapon.description;
-                    }
-                });
-            }
-
-            if (data.armors) {
-                data.armors.forEach(armor => {
-                    addArmor();
-                    const rows = document.querySelectorAll('#armorsContainer .item-row');
-                    const lastRow = rows[rows.length - 1];
-                    if (lastRow) {
-                        const typeSelect = lastRow.querySelector('.dynamic-armor-type');
-                        const descInput = lastRow.querySelector('.dynamic-armor-description');
-                        if (typeSelect) typeSelect.value = armor.type;
-                        if (descInput) descInput.value = armor.description;
-                    }
-                });
-            }
-
-            if (data.sessionLogs) {
-                data.sessionLogs.forEach(log => {
-                    addSessionLog();
-                    const rows = document.querySelectorAll('#sessionLogsContainer .item-row');
-                    const lastRow = rows[rows.length - 1];
-                    if (lastRow) {
-                        const titleInput = lastRow.querySelector('.dynamic-session-title');
-                        const scarsInput = lastRow.querySelector('.dynamic-session-scars');
-                        const expInput = lastRow.querySelector('.dynamic-session-exp');
-                        const notesTextarea = lastRow.querySelector('.dynamic-session-notes');
-                        if (titleInput) titleInput.value = log.title;
-                        if (scarsInput) scarsInput.value = log.scars;
-                        if (expInput) expInput.value = log.exp;
-                        if (notesTextarea) notesTextarea.value = log.notes;
-                    }
-                });
-            }
-
+            data.weaknesses?.forEach(text => { addWeakness(); document.querySelector('#weaknessesContainer .item-row:last-child .dynamic-weakness').value = text; });
+            data.specialSkills?.forEach(d => { addSpecialSkill(); const r = document.querySelector('#specialSkillsContainer .item-row:last-child'); r.querySelector('.dynamic-special-skill-type').value = d.type; r.querySelector('.dynamic-special-skill-name').value = d.name; });
+            data.feats?.forEach(d => { addFeat(); const r = document.querySelector('#featsContainer .item-row:last-child'); r.querySelector('.dynamic-feat-type').value = d.type; r.querySelector('.dynamic-feat-name').value = d.name; r.querySelector('.dynamic-feat-description').value = d.description; r.querySelector('.dynamic-feat-reward').checked = d.reward; });
+            data.weapons?.forEach(d => { addWeapon(); const r = document.querySelector('#weaponsContainer .item-row:last-child'); r.querySelector('.dynamic-weapon-type').value = d.type; r.querySelector('.dynamic-weapon-description').value = d.description; });
+            data.armors?.forEach(d => { addArmor(); const r = document.querySelector('#armorsContainer .item-row:last-child'); r.querySelector('.dynamic-armor-type').value = d.type; r.querySelector('.dynamic-armor-description').value = d.description; });
+            data.sessionLogs?.forEach(d => { addSessionLog(); const r = document.querySelector('.session-log-row:last-child'); r.querySelector('.dynamic-session-title').value = d.title; r.querySelector('.dynamic-session-scars').value = d.scars; r.querySelector('.dynamic-session-exp').value = d.exp; r.querySelector('.dynamic-session-notes').value = d.notes; });
+            
             updateAllStats();
         }
 
-        // --- ★ 新規追加: ココフォリア出力用関数 ★ ---
+        // --- Cocofolia Export ---
         function exportForCocofolia() {
-            const data = gatherData(); // 既存のデータ収集関数を利用
-
-            // 装備情報の判定
-            const hasLightArmor = data.armors.some(armor => armor.type === "軽装防具");
-            const hasHeavyArmor = data.armors.some(armor => armor.type === "重装防具");
-            const hasAnyArmor = hasLightArmor || hasHeavyArmor;
-
-            // 1. チャットパレットの作成
+            const data = gatherData();
+            const hasHeavyArmor = data.armors.some(a => a.type === "重装防具");
+            
             let paletteLines = [];
             paletteLines.push('// ----- 一般技能 -----');
-            generalSkillNames.forEach(skillName => {
-                // 通常の技能処理を常に行う
-                const isAcquired = data.generalSkills[skillName];
-                if (isAcquired) {
-                    paletteLines.push(`2d10 《${skillName}》`);
+            data.generalSkills && Object.entries(data.generalSkills).forEach(([name, checked]) => {
+                if (name === "防御" && (data.armors.length > 0)) {
+                     paletteLines.push(`2d10+2 《防御(防具あり)》`);
                 } else {
-                    paletteLines.push(`1d10 《${skillName}》`);
+                     paletteLines.push(`${checked ? '2d10' : '1d10'} 《${name}》`);
                 }
             });
-
-            // 防具を装備している場合、追加の防御判定を追加
-            if (hasAnyArmor) {
-                paletteLines.push('2d10+2 《防御(防具あり)》');
-            }
-
+            
             if (data.specialSkills.length > 0) {
                 paletteLines.push('// ----- 専門技能 -----');
-                data.specialSkills.forEach(skill => {
-                    if (skill.name) {
-                        paletteLines.push(`3d10 《${skill.type}：${skill.name}》`);
-                    }
-                });
+                data.specialSkills.forEach(s => s.name && paletteLines.push(`3d10 《${s.type}：${s.name}》`));
             }
-            
-            // ダメージ判定を追加
+
             const weaponTypesInUse = new Set(data.weapons.map(w => w.type));
             if (weaponTypesInUse.size > 0) {
-                  paletteLines.push('// ----- ダメージ判定 -----');
-                  if (weaponTypesInUse.has("小型白兵武器")) {
-                    paletteLines.push('1d4+1 〈ダメージ判定：小型白兵武器〉');
-                  }
-                  if (weaponTypesInUse.has("中型白兵武器")) {
-                    paletteLines.push('1d6+1 〈ダメージ判定：中型白兵武器〉');
-                  }
-                  if (weaponTypesInUse.has("大型白兵武器")) {
-                    paletteLines.push('1d10 〈ダメージ判定：大型白兵武器〉');
-                  }
-                  if (weaponTypesInUse.has("射撃武器")) {
-                    paletteLines.push('1d8 〈ダメージ判定：射撃武器〉');
-                  }
+                paletteLines.push('// ----- ダメージ判定 -----');
+                if (weaponTypesInUse.has("小型白兵武器")) paletteLines.push('1d4+1 〈ダメージ判定：小型白兵武器〉');
+                if (weaponTypesInUse.has("中型白兵武器")) paletteLines.push('1d6+1 〈ダメージ判定：中型白兵武器〉');
+                if (weaponTypesInUse.has("大型白兵武器")) paletteLines.push('1d10 〈ダメージ判定：大型白兵武器〉');
+                if (weaponTypesInUse.has("射撃武器")) paletteLines.push('1d8 〈ダメージ判定：射撃武器〉');
             }
 
-            // ダメージ軽減判定の追加
             paletteLines.push('// ----- ダメージ軽減 -----');
-            paletteLines.push('1d3 〈ダメージ軽減判定〉');
-            if (hasHeavyArmor) {
-                paletteLines.push('1d3+1 〈ダメージ軽減判定(重装防具あり)〉');
-            }
-
-            // チェック項目を追加
+            paletteLines.push(`1d3${hasHeavyArmor ? '+1' : ''} 〈ダメージ軽減判定${hasHeavyArmor ? '(重装)' : ''}〉`);
+            
             paletteLines.push('// ----- チェック -----');
             paletteLines.push('1d100>={ダメージ}+{傷痕} 〈ダメージチェック〉');
             paletteLines.push('1d100>={ストレス} 〈ストレスチェック〉');
 
-            const chatPalette = paletteLines.join('\n');
-
-            // 2. メモ欄の作成
-            let memoLines = [];
-            memoLines.push(`種族: ${data.characterRace || '未設定'}`);
-            memoLines.push('▼設定');
-            memoLines.push(data.characterSetting || '（設定なし）');
-            memoLines.push('--------');
-
+            let memoLines = [`種族: ${data.characterRace || '未設定'}`, '▼設定', data.characterSetting || '（設定なし）', '--------'];
             memoLines.push('▼弱点');
-            let hasWeakness = false;
-            if (data.initialWeaknessCheck && data.initialWeaknessDescription) {
-                memoLines.push(`・${data.initialWeaknessDescription} (初期)`);
-                hasWeakness = true;
-            }
-            data.weaknesses.forEach(w => {
-                if(w) {
-                    memoLines.push(`・${w}`);
-                    hasWeakness = true;
-                }
-            });
-            if (!hasWeakness) memoLines.push('（弱点なし）');
-            memoLines.push('--------');
-
-            memoLines.push('▼特技');
-            if (data.feats.length > 0) {
-                data.feats.forEach(f => {
-                    memoLines.push(`【${f.type}】${f.name}`);
-                    memoLines.push(f.description);
-                });
-            } else {
-                memoLines.push('（特技なし）');
-            }
-            memoLines.push('--------');
-
-            memoLines.push('▼装備');
-            if (data.weapons.length > 0) {
-                data.weapons.forEach(w => memoLines.push(`[武器] ${w.type}: ${w.description}`));
-            }
-              if (data.armors.length > 0) {
-                data.armors.forEach(a => memoLines.push(`[防具] ${a.type}: ${a.description}`));
-            }
-            if (data.weapons.length === 0 && data.armors.length === 0) {
-                memoLines.push('（装備なし）');
-            }
-            const memo = memoLines.join('\n');
-
-
-            // 3. ココフォリア用JSONオブジェクトの構築
-            // 値がNaNになるのを防ぐために、|| 0 でフォールバック
-            const scarsValue = parseInt(document.getElementById('scarsDisplay').textContent) || 0;
-            const loadValue = parseInt(document.getElementById('loadDisplay').textContent) || 0;
-
+            let weaknesses = data.weaknesses.filter(w => w);
+            if(data.initialWeaknessCheck && data.initialWeaknessDescription) weaknesses.unshift(`${data.initialWeaknessDescription} (初期)`);
+            memoLines.push(weaknesses.length > 0 ? weaknesses.map(w => `・${w}`).join('\n') : '（弱点なし）');
+            memoLines.push('--------', '▼特技');
+            memoLines.push(data.feats.length > 0 ? data.feats.map(f => `【${f.type}】${f.name}\n${f.description}`).join('\n') : '（特技なし）');
+            memoLines.push('--------', '▼装備');
+            let equipment = [
+                ...data.weapons.map(w => `[武器] ${w.type}: ${w.description}`),
+                ...data.armors.map(a => `[防具] ${a.type}: ${a.description}`)
+            ];
+            memoLines.push(equipment.length > 0 ? equipment.join('\n') : '（装備なし）');
+            
             const cocofoliaData = {
                 kind: "character",
                 data: {
                     name: data.characterName || '無名のキャラクター',
-                    memo: memo,
-                    // 荷重の値を負の値にしてイニシアティブに設定
-                    initiative: -loadValue,
-                    externalUrl: '',
-                    // ステータスを「ダメージ」「ストレス」「傷痕」に変更
+                    memo: memoLines.join('\n'),
+                    initiative: -(parseInt(document.getElementById('loadDisplay').textContent) || 0),
                     status: [
                         { label: "ダメージ", value: 0, max: 0 },
                         { label: "ストレス", value: 0, max: 0 },
-                        { label: "傷痕", value: scarsValue, max: 0 }
+                        { label: "傷痕", value: parseInt(document.getElementById('scarsDisplay').textContent) || 0, max: 0 }
                     ],
-                    params: [],
-                    commands: chatPalette
+                    commands: paletteLines.join('\n')
                 }
             };
             
-            // 4. クリップボードへのコピー
-            const jsonString = JSON.stringify(cocofoliaData, null, 2);
-            const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = jsonString;
-            document.body.appendChild(tempTextArea);
-            tempTextArea.select();
-            
-            let success = false;
-            try {
-                success = document.execCommand('copy');
-            } catch (err) {
-                console.error('クリップボードへのコピーに失敗しました', err);
-            }
-            document.body.removeChild(tempTextArea);
-
-            // 5. ユーザーへのフィードバック
-            const exportButton = document.getElementById('cocofolia-export-btn');
-            const originalText = exportButton.textContent;
-            if (success) {
-                exportButton.textContent = 'コピーしました！';
-            } else {
-                exportButton.textContent = 'コピー失敗';
-            }
-
-            setTimeout(() => {
-                exportButton.textContent = originalText;
-            }, 2000);
+            navigator.clipboard.writeText(JSON.stringify(cocofoliaData, null, 2)).then(() => {
+                const btn = document.getElementById('cocofolia-export-btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'コピーしました！';
+                setTimeout(() => { btn.textContent = originalText; }, 2000);
+            }).catch(err => console.error('Copy failed', err));
         }
 
     </script>
 </body>
 </html>
-
 
 
 
