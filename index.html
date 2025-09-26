@@ -87,6 +87,13 @@
         .remove-button {
             color: #dc3545;
             border-color: #dc3545;
+            /* --- Style adjustments for a smaller 'x' button --- */
+            padding: 2px 10px;      /* Reduced padding */
+            font-size: 1.2em;       /* Make the '×' character a bit larger and clearer */
+            font-weight: bold;
+            line-height: 1;         /* Center the '×' vertically */
+            min-width: auto;        /* Let the size be determined by content and padding */
+            flex-shrink: 0;         /* Prevent shrinking in flex containers */
         }
         .remove-button:hover {
             background-color: #dc3545;
@@ -189,6 +196,23 @@
                 flex-direction: column;
             }
         }
+
+        /* --- 経験点トラッカーのスタイル --- */
+        #experience-tracker {
+            position: fixed;
+            bottom: 20px;
+            left: 20px; /* 位置を左に変更 */
+            background-color: rgba(30, 30, 30, 0.9);
+            color: #e0e0e0;
+            padding: 12px 18px;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            z-index: 1000;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: 1px solid #444;
+            backdrop-filter: blur(5px); /* モダンブラウザ用の背景ぼかし効果 */
+        }
     </style>
 </head>
 <body>
@@ -290,14 +314,20 @@
 
                 <div class="section">
                     <h2>データ管理</h2>
-                    <button type="button" onclick="exportData()">キャラクターデータをエクスポート</button>
+                    <button type="button" onclick="exportData()">データを保存</button>
                     <button type="button" id="cocofolia-export-btn" onclick="exportForCocofolia()">ココフォリア駒出力</button>
-                    <label for="importFile" style="margin-top: 15px;">キャラクターデータをインポート:</label>
+                    <label for="importFile" style="margin-top: 15px;">データをロード:</label>
                     <input type="file" id="importFile" accept=".txt" onchange="importData(event)">
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- 経験点トラッカー -->
+    <div id="experience-tracker">
+        経験点: <span id="experience-tracker-value">100</span>
+    </div>
+
 
     <script>
         // 初期値
@@ -358,8 +388,11 @@
         }
 
         function removeDynamicItem(buttonElement) {
-            buttonElement.parentElement.remove();
-            updateAllStats();
+            const itemRow = buttonElement.closest('.item-row');
+            if(itemRow) {
+                itemRow.remove();
+                updateAllStats();
+            }
         }
 
         function addWeakness() {
@@ -367,13 +400,12 @@
                 const div = document.createElement('div');
                 div.className = 'item-row';
                 div.innerHTML = `
-                    <input type="text" placeholder="弱点の詳細" class="dynamic-weakness" style="flex-grow:1;" onchange="updateAllStats()">
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                    <input type="text" placeholder="弱点の詳細" class="dynamic-weakness" onchange="updateAllStats()">
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>
                 `;
                 return div;
             });
         }
-
 
         function addSpecialSkill() {
             addDynamicItem('specialSkillsContainer', (index) => {
@@ -382,8 +414,8 @@
                 let optionsHtml = specialSkillBaseTypes.map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
                     <select class="dynamic-special-skill-type" onchange="updateAllStats()"></select>
-                    <input type="text" placeholder="専門技能名・詳細" class="dynamic-special-skill-name description-field" onchange="updateAllStats()">
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                    <input type="text" placeholder="専門技能名・詳細" class="dynamic-special-skill-name" onchange="updateAllStats()">
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>
                 `;
                 div.querySelector('.dynamic-special-skill-type').innerHTML = optionsHtml;
                 return div;
@@ -396,12 +428,14 @@
                 div.className = 'item-row';
                 let typeOptionsHtml = featTypes.map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
-                    <select class="dynamic-feat-type" style="flex-basis:50px;" onchange="updateAllStats()"></select>
-                    <input type="text" placeholder="特技名" class="dynamic-feat-name" style="flex-basis:180px; flex-grow:0;" onchange="updateAllStats()">
-                    <label style="margin-top:0; display:flex; align-items:center; font-weight:normal; color: #f0f0f0; flex-grow: 1; justify-content: flex-start;">
-                        <input type="checkbox" class="dynamic-feat-reward" onchange="updateAllStats()" style="margin-right:5px;"> シナリオ報酬
-                    </label>
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="flex-shrink:0;">削除</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <label style="margin-top:0; display:flex; align-items:center; font-weight:normal; color: #f0f0f0; font-size: 0.9em; white-space: nowrap;">
+                            <input type="checkbox" class="dynamic-feat-reward" onchange="updateAllStats()" style="margin-right:5px;"> シナリオ報酬
+                        </label>
+                        <button type="button" class="remove-button" onclick="removeDynamicItem(this)">×</button>
+                    </div>
+                    <select class="dynamic-feat-type" style="flex-basis: 90px; margin-top: 8px;" onchange="updateAllStats()"></select>
+                    <input type="text" placeholder="特技名" class="dynamic-feat-name" style="flex-grow: 1; margin-top: 8px;" onchange="updateAllStats()">
                     <textarea placeholder="特技説明" class="dynamic-feat-description description-field" style="height: 60px;" onchange="updateAllStats()"></textarea>
                 `;
                 div.querySelector('.dynamic-feat-type').innerHTML = typeOptionsHtml;
@@ -416,8 +450,8 @@
                 let optionsHtml = Object.keys(weaponTypes).map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
                     <select class="dynamic-weapon-type" onchange="updateAllStats()"></select>
-                    <input type="text" placeholder="武器名・詳細" class="dynamic-weapon-description description-field" onchange="updateAllStats()">
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                    <input type="text" placeholder="武器名・詳細" class="dynamic-weapon-description" onchange="updateAllStats()">
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>
                 `;
                 div.querySelector('.dynamic-weapon-type').innerHTML = optionsHtml;
                 return div;
@@ -431,8 +465,8 @@
                 let optionsHtml = Object.keys(armorTypes).map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
                     <select class="dynamic-armor-type" onchange="updateAllStats()"></select>
-                    <input type="text" placeholder="防具名・詳細" class="dynamic-armor-description description-field" onchange="updateAllStats()">
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)">削除</button>
+                    <input type="text" placeholder="防具名・詳細" class="dynamic-armor-description" onchange="updateAllStats()">
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>
                 `;
                 div.querySelector('.dynamic-armor-type').innerHTML = optionsHtml;
                 return div;
@@ -448,13 +482,13 @@
                 div.innerHTML = `
                     <input type="text" placeholder="シナリオ名" class="dynamic-session-title" onchange="updateAllStats()">
                     <div class="inline-inputs" style="margin-top:5px;">
-                        <label style="margin-top:0; flex-basis:100px;">受けた傷痕:</label>
-                        <input type="number" value="0" class="dynamic-session-scars" onchange="updateAllStats()" style="width:80px;">
-                        <label style="margin-top:0; flex-basis:100px; margin-left:10px;">追加経験点:</label>
-                        <input type="number" value="0" class="dynamic-session-exp" onchange="updateAllStats()" style="width:80px;">
+                        <label style="margin-top:0; flex-basis:100px; font-size: 0.9em;">受けた傷痕:</label>
+                        <input type="number" value="0" class="dynamic-session-scars" onchange="updateAllStats()" style="width:55px;">
+                        <label style="margin-top:0; flex-basis:100px; margin-left:10px; font-size: 0.9em;">追加経験点:</label>
+                        <input type="number" value="0" class="dynamic-session-exp" onchange="updateAllStats()" style="width:50px;">
                     </div>
                     <textarea placeholder="その他記録" class="dynamic-session-notes" style="margin-top:5px;" onchange="updateAllStats()"></textarea>
-                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="align-self:flex-end;">記録を削除</button>
+                    <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="align-self:flex-end;">×</button>
                 `;
                 return div;
             });
@@ -498,6 +532,8 @@
 
             experiencePoints = currentExperience;
             document.getElementById('experiencePointsDisplay').textContent = experiencePoints;
+            // ★追記: 画面右下の経験点トラッカーも更新
+            document.getElementById('experience-tracker-value').textContent = experiencePoints;
 
             // 傷痕計算
             let currentScars = 0;
@@ -753,10 +789,16 @@
         function exportForCocofolia() {
             const data = gatherData(); // 既存のデータ収集関数を利用
 
+            // 装備情報の判定
+            const hasLightArmor = data.armors.some(armor => armor.type === "軽装防具");
+            const hasHeavyArmor = data.armors.some(armor => armor.type === "重装防具");
+            const hasAnyArmor = hasLightArmor || hasHeavyArmor;
+
             // 1. チャットパレットの作成
             let paletteLines = [];
             paletteLines.push('// ----- 一般技能 -----');
             generalSkillNames.forEach(skillName => {
+                // 通常の技能処理を常に行う
                 const isAcquired = data.generalSkills[skillName];
                 if (isAcquired) {
                     paletteLines.push(`2d10 《${skillName}》`);
@@ -764,6 +806,11 @@
                     paletteLines.push(`1d10 《${skillName}》`);
                 }
             });
+
+            // 防具を装備している場合、追加の防御判定を追加
+            if (hasAnyArmor) {
+                paletteLines.push('2d10+2 《防御(防具あり)》');
+            }
 
             if (data.specialSkills.length > 0) {
                 paletteLines.push('// ----- 専門技能 -----');
@@ -774,6 +821,31 @@
                 });
             }
             
+            // ダメージ判定を追加
+            const weaponTypesInUse = new Set(data.weapons.map(w => w.type));
+            if (weaponTypesInUse.size > 0) {
+                 paletteLines.push('// ----- ダメージ判定 -----');
+                 if (weaponTypesInUse.has("小型白兵武器")) {
+                    paletteLines.push('1d4+1 〈ダメージ判定：小型白兵武器〉');
+                 }
+                 if (weaponTypesInUse.has("中型白兵武器")) {
+                    paletteLines.push('1d6+1 〈ダメージ判定：中型白兵武器〉');
+                 }
+                 if (weaponTypesInUse.has("大型白兵武器")) {
+                    paletteLines.push('1d10 〈ダメージ判定：大型白兵武器〉');
+                 }
+                 if (weaponTypesInUse.has("射撃武器")) {
+                    paletteLines.push('1d8 〈ダメージ判定：射撃武器〉');
+                 }
+            }
+
+            // ダメージ軽減判定の追加
+            paletteLines.push('// ----- ダメージ軽減 -----');
+            paletteLines.push('1d3 〈ダメージ軽減判定〉');
+            if (hasHeavyArmor) {
+                paletteLines.push('1d3+1 〈ダメージ軽減判定(重装防具あり)〉');
+            }
+
             // チェック項目を追加
             paletteLines.push('// ----- チェック -----');
             paletteLines.push('1d100>={ダメージ}+{傷痕} 〈ダメージチェック〉');
@@ -840,7 +912,7 @@
                     // 荷重の値を負の値にしてイニシアティブに設定
                     initiative: -loadValue,
                     externalUrl: '',
-                    // ステータスを「ダメージ」「ストレス」「傷跡」に変更
+                    // ステータスを「ダメージ」「ストレス」「傷痕」に変更
                     status: [
                         { label: "ダメージ", value: 0, max: 0 },
                         { label: "ストレス", value: 0, max: 0 },
@@ -883,6 +955,12 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
 
 
 
