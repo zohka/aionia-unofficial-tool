@@ -216,6 +216,30 @@
             border: 1px solid #444;
             backdrop-filter: blur(5px); /* モダンブラウザ用の背景ぼかし効果 */
         }
+
+        /* --- Collapsible sections --- */
+        .collapsible-header {
+            cursor: pointer;
+            user-select: none;
+            position: relative; /* For positioning the pseudo-element */
+            padding-right: 25px; /* Make space for the indicator */
+        }
+        .collapsible-header::after {
+            content: "∧";
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: #00aaff;
+            transition: transform 0.2s ease;
+        }
+        .collapsible-header.collapsed::after {
+            content: "∨";
+        }
+        .collapsible-content.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -240,7 +264,7 @@
                         <textarea id="characterSetting" onchange="updateAllStats()"></textarea>
                     </div>
                 </div>
-                
+                            
                 <div class="section">
                     <h2>ステータス</h2>
                     <div class="flex-container">
@@ -273,23 +297,26 @@
                 </div>
 
                 <div class="section">
-                    <h2>技能</h2>
-                    <h3>一般技能</h3>
-                    <div id="generalSkillsContainer">
+                    <h2 class="collapsible-header collapsed" onclick="toggleSection('skillsContent')">技能</h2>
+                    <div id="skillsContent" class="collapsible-content hidden">
+                        <h3>一般技能</h3>
+                        <div id="generalSkillsContainer">
+                        </div>
+                        <h3>専門技能</h3>
+                        <div id="specialSkillsContainer">
+                        </div>
+                        <button type="button" onclick="addSpecialSkill()">専門技能を追加</button>
                     </div>
-                    <h3>専門技能</h3>
-                    <div id="specialSkillsContainer">
-                    </div>
-                    <button type="button" onclick="addSpecialSkill()">専門技能を追加</button>
                 </div>
 
                 <div class="section">
-                    <h2>特技</h2>
-                    <div id="featsContainer">
+                    <h2 class="collapsible-header collapsed" onclick="toggleSection('featsContent')">特技</h2>
+                    <div id="featsContent" class="collapsible-content hidden">
+                        <div id="featsContainer">
+                        </div>
+                        <button type="button" onclick="addFeat()">特技を追加</button>
                     </div>
-                    <button type="button" onclick="addFeat()">特技を追加</button>
                 </div>
-
             </div>
 
             <!-- 右列 -->
@@ -309,10 +336,12 @@
                 </div>
 
                 <div class="section">
-                    <h2>セッションの記録</h2>
-                    <div id="sessionLogsContainer">
+                    <h2 class="collapsible-header collapsed" onclick="toggleSection('sessionLogsContent')">セッションの記録</h2>
+                    <div id="sessionLogsContent" class="collapsible-content hidden">
+                        <div id="sessionLogsContainer">
+                        </div>
+                        <button type="button" onclick="addSessionLog()">セッション記録を追加</button>
                     </div>
-                    <button type="button" onclick="addSessionLog()">セッション記録を追加</button>
                 </div>
 
                 <div class="section">
@@ -358,6 +387,20 @@
             populateGeneralSkills();
             updateAllStats();
         });
+
+        // --- セクション表示切替関数 ---
+        function toggleSection(contentId) {
+            const content = document.getElementById(contentId);
+            const header = content.previousElementSibling; // h2タグを取得
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                header.classList.remove('collapsed');
+            } else {
+                content.classList.add('hidden');
+                header.classList.add('collapsed');
+            }
+        }
 
         function populateGeneralSkills() {
             const container = document.getElementById('generalSkillsContainer');
@@ -827,19 +870,19 @@
             // ダメージ判定を追加
             const weaponTypesInUse = new Set(data.weapons.map(w => w.type));
             if (weaponTypesInUse.size > 0) {
-                 paletteLines.push('// ----- ダメージ判定 -----');
-                 if (weaponTypesInUse.has("小型白兵武器")) {
+                  paletteLines.push('// ----- ダメージ判定 -----');
+                  if (weaponTypesInUse.has("小型白兵武器")) {
                     paletteLines.push('1d4+1 〈ダメージ判定：小型白兵武器〉');
-                 }
-                 if (weaponTypesInUse.has("中型白兵武器")) {
+                  }
+                  if (weaponTypesInUse.has("中型白兵武器")) {
                     paletteLines.push('1d6+1 〈ダメージ判定：中型白兵武器〉');
-                 }
-                 if (weaponTypesInUse.has("大型白兵武器")) {
+                  }
+                  if (weaponTypesInUse.has("大型白兵武器")) {
                     paletteLines.push('1d10 〈ダメージ判定：大型白兵武器〉');
-                 }
-                 if (weaponTypesInUse.has("射撃武器")) {
+                  }
+                  if (weaponTypesInUse.has("射撃武器")) {
                     paletteLines.push('1d8 〈ダメージ判定：射撃武器〉');
-                 }
+                  }
             }
 
             // ダメージ軽減判定の追加
@@ -893,7 +936,7 @@
             if (data.weapons.length > 0) {
                 data.weapons.forEach(w => memoLines.push(`[武器] ${w.type}: ${w.description}`));
             }
-             if (data.armors.length > 0) {
+              if (data.armors.length > 0) {
                 data.armors.forEach(a => memoLines.push(`[防具] ${a.type}: ${a.description}`));
             }
             if (data.weapons.length === 0 && data.armors.length === 0) {
