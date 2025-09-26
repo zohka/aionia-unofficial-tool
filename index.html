@@ -284,15 +284,17 @@
                 </div>
 
                 <div class="section">
-                    <h2>弱点</h2>
-                    <div id="weaknessesContainer">
-                    </div>
-                    <button type="button" onclick="addWeakness()">弱点を追加</button>
-                    <h3>初期弱点</h3>
-                    <div>
-                        <input type="checkbox" id="initialWeaknessCheck" onchange="toggleInitialWeaknessDescription(); updateAllStats();">
-                        <label for="initialWeaknessCheck" style="display:inline;">初期弱点を負う（経験点+10）</label>
-                        <input type="text" id="initialWeaknessDescription" placeholder="初期弱点の詳細" disabled onchange="updateAllStats()">
+                    <h2 class="collapsible-header collapsed" onclick="toggleSection('weaknessesContent')">弱点</h2>
+                    <div id="weaknessesContent" class="collapsible-content hidden">
+                        <div id="weaknessesContainer">
+                        </div>
+                        <button type="button" onclick="addWeakness()">弱点を追加</button>
+                        <h3>初期弱点</h3>
+                        <div>
+                            <input type="checkbox" id="initialWeaknessCheck" onchange="toggleInitialWeaknessDescription(); updateAllStats();">
+                            <label for="initialWeaknessCheck" style="display:inline;">初期弱点を負う（経験点+10）</label>
+                            <input type="text" id="initialWeaknessDescription" placeholder="初期弱点の詳細" disabled onchange="updateAllStats()">
+                        </div>
                     </div>
                 </div>
 
@@ -322,17 +324,19 @@
             <!-- 右列 -->
             <div class="layout-column" id="right-column">
                 <div class="section">
-                    <h2>装備品</h2>
-                    <label>荷重:</label>
-                    <div id="loadDisplay" class="status-display">0</div>
-                    <h3>武器</h3>
-                    <div id="weaponsContainer">
+                    <h2 class="collapsible-header collapsed" onclick="toggleSection('equipmentContent')">装備品</h2>
+                    <div id="equipmentContent" class="collapsible-content hidden">
+                        <label>荷重:</label>
+                        <div id="loadDisplay" class="status-display">0</div>
+                        <h3>武器</h3>
+                        <div id="weaponsContainer">
+                        </div>
+                        <button type="button" onclick="addWeapon()">武器を追加</button>
+                        <h3>防具</h3>
+                        <div id="armorsContainer">
+                        </div>
+                        <button type="button" onclick="addArmor()">防具を追加</button>
                     </div>
-                    <button type="button" onclick="addWeapon()">武器を追加</button>
-                    <h3>防具</h3>
-                    <div id="armorsContainer">
-                    </div>
-                    <button type="button" onclick="addArmor()">防具を追加</button>
                 </div>
 
                 <div class="section">
@@ -1001,6 +1005,7 @@
     </script>
 </body>
 </html>
+
 
 
 
