@@ -653,11 +653,11 @@
             const container = document.getElementById(containerId);
             let draggingElement = null;
 
+            // --- Mouse Events for PC ---
             container.addEventListener('dragstart', e => {
                 const targetRow = e.target.closest('.item-row');
                 if (targetRow && targetRow.parentElement === container) {
                     draggingElement = targetRow;
-                    // Use timeout to allow browser to render drag image before we style the element
                     setTimeout(() => {
                         draggingElement.classList.add('dragging');
                     }, 0);
@@ -668,7 +668,6 @@
                 if (draggingElement) {
                     draggingElement.classList.remove('dragging');
                     draggingElement = null;
-                    // Update stats after drop to reflect new order for saving/exporting
                     updateAllStats();
                 }
             });
@@ -676,12 +675,46 @@
             container.addEventListener('dragover', e => {
                 e.preventDefault();
                 if (!draggingElement) return;
-
                 const afterElement = getDragAfterElement(container, e.clientY);
                 if (afterElement == null) {
                     container.appendChild(draggingElement);
                 } else {
                     container.insertBefore(draggingElement, afterElement);
+                }
+            });
+
+            // --- Touch Events for Mobile ---
+            container.addEventListener('touchstart', e => {
+                const handle = e.target.closest('.drag-handle');
+                if (!handle) return;
+                
+                const targetRow = handle.closest('.item-row');
+                if (targetRow && targetRow.parentElement === container) {
+                    draggingElement = targetRow;
+                    draggingElement.classList.add('dragging');
+                }
+            }, { passive: true });
+
+            container.addEventListener('touchmove', e => {
+                if (!draggingElement) return;
+                
+                // Prevent scrolling while dragging
+                e.preventDefault();
+
+                const touch = e.touches[0];
+                const afterElement = getDragAfterElement(container, touch.clientY);
+                if (afterElement == null) {
+                    container.appendChild(draggingElement);
+                } else {
+                    container.insertBefore(draggingElement, afterElement);
+                }
+            }, { passive: false }); // Use { passive: false } to allow preventDefault
+
+            container.addEventListener('touchend', e => {
+                if (draggingElement) {
+                    draggingElement.classList.remove('dragging');
+                    draggingElement = null;
+                    updateAllStats();
                 }
             });
         }
@@ -1084,6 +1117,12 @@
                 exportButton.textContent = originalText;
             }, 2000);
         }
+
+    </script>
+</body>
+</html>
+
+
 
     </script>
 </body>
