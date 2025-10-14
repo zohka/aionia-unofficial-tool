@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>慈悲なきアイオニア用非公式キャラシ作成ツール</title>
+    <title>慈悲なきアイオニア非公式キャラエディター</title>
     <style>
         body {
             font-family: sans-serif;
@@ -246,6 +246,20 @@
         .collapsible-content.hidden {
             display: none;
         }
+
+        /* --- Drag and Drop Styles --- */
+        .drag-handle {
+            cursor: move;
+            user-select: none;
+            padding: 0 5px;
+            color: #888;
+            font-size: 1.5em;
+            line-height: 1;
+        }
+        .item-row.dragging {
+            opacity: 0.5;
+            background: #444;
+        }
     </style>
 </head>
 <body>
@@ -396,6 +410,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             populateGeneralSkills();
             updateAllStats();
+            // ドラッグ＆ドロップ機能のセットアップ
+            setupDragAndDrop('specialSkillsContainer');
+            setupDragAndDrop('featsContainer');
         });
 
         // --- セクション表示切替関数 ---
@@ -467,8 +484,10 @@
             addDynamicItem('specialSkillsContainer', (index) => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
+                div.draggable = true; // ドラッグ可能に設定
                 let optionsHtml = specialSkillBaseTypes.map(type => `<option value="${type}">${type}</option>`).join('');
                 div.innerHTML = `
+                    <span class="drag-handle">☰</span>
                     <select class="dynamic-special-skill-type" onchange="updateAllStats()"></select>
                     <input type="text" placeholder="専門技能名・詳細" class="dynamic-special-skill-name" onchange="updateAllStats()">
                     <button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>
@@ -482,17 +501,22 @@
             addDynamicItem('featsContainer', (index) => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
+                div.draggable = true; // ドラッグ可能に設定
                 let typeOptionsHtml = featTypes.map(type => `<option value="${type}">${type}</option>`).join('');
+                // Note: Wrapped original content in a div to group it with the handle
                 div.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                        <label style="margin-top:0; display:flex; align-items:center; font-weight:normal; color: #f0f0f0; font-size: 0.9em; white-space: nowrap;">
-                            <input type="checkbox" class="dynamic-feat-reward" onchange="updateAllStats()" style="margin-right:5px;"> シナリオ報酬
-                        </label>
-                        <button type="button" class="remove-button" onclick="removeDynamicItem(this)">×</button>
+                    <span class="drag-handle">☰</span>
+                    <div style="flex: 1; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                            <label style="margin-top:0; display:flex; align-items:center; font-weight:normal; color: #f0f0f0; font-size: 0.9em; white-space: nowrap;">
+                                <input type="checkbox" class="dynamic-feat-reward" onchange="updateAllStats()" style="margin-right:5px;"> シナリオ報酬
+                            </label>
+                            <button type="button" class="remove-button" onclick="removeDynamicItem(this)">×</button>
+                        </div>
+                        <select class="dynamic-feat-type" style="flex-basis: 90px;" onchange="updateAllStats()"></select>
+                        <input type="text" placeholder="特技名" class="dynamic-feat-name" style="flex-grow: 1;" onchange="updateAllStats()">
+                        <textarea placeholder="特技説明" class="dynamic-feat-description description-field" style="height: 60px;" onchange="updateAllStats()"></textarea>
                     </div>
-                    <select class="dynamic-feat-type" style="flex-basis: 90px; margin-top: 8px;" onchange="updateAllStats()"></select>
-                    <input type="text" placeholder="特技名" class="dynamic-feat-name" style="flex-grow: 1; margin-top: 8px;" onchange="updateAllStats()">
-                    <textarea placeholder="特技説明" class="dynamic-feat-description description-field" style="height: 60px;" onchange="updateAllStats()"></textarea>
                 `;
                 div.querySelector('.dynamic-feat-type').innerHTML = typeOptionsHtml;
                 return div;
@@ -623,6 +647,59 @@
             load = currentLoad;
             document.getElementById('loadDisplay').textContent = load;
         }
+        
+        // --- ドラッグ＆ドロップ機能 ---
+        function setupDragAndDrop(containerId) {
+            const container = document.getElementById(containerId);
+            let draggingElement = null;
+
+            container.addEventListener('dragstart', e => {
+                const targetRow = e.target.closest('.item-row');
+                if (targetRow && targetRow.parentElement === container) {
+                    draggingElement = targetRow;
+                    // Use timeout to allow browser to render drag image before we style the element
+                    setTimeout(() => {
+                        draggingElement.classList.add('dragging');
+                    }, 0);
+                }
+            });
+
+            container.addEventListener('dragend', e => {
+                if (draggingElement) {
+                    draggingElement.classList.remove('dragging');
+                    draggingElement = null;
+                    // Update stats after drop to reflect new order for saving/exporting
+                    updateAllStats();
+                }
+            });
+
+            container.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (!draggingElement) return;
+
+                const afterElement = getDragAfterElement(container, e.clientY);
+                if (afterElement == null) {
+                    container.appendChild(draggingElement);
+                } else {
+                    container.insertBefore(draggingElement, afterElement);
+                }
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.item-row:not(.dragging)')];
+
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
 
         // --- データエクスポート/インポート ---
         function gatherData() {
