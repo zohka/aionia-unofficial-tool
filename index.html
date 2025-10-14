@@ -198,12 +198,9 @@
             .main-layout {
                 flex-direction: column;
             }
-            /* ===== 修正箇所 ===== */
-            /* 1カラム表示の際に、カラムが親要素の幅いっぱいに広がるように設定 */
             .layout-column {
                 width: 100%;
             }
-            /* ==================== */
         }
 
         /* --- 経験点トラッカーのスタイル --- */
@@ -251,9 +248,9 @@
         .drag-handle {
             cursor: move;
             user-select: none;
-            padding: 0 5px;
+            padding: 0 2px; /* 横のpaddingを詰める */
             color: #888;
-            font-size: 1.5em;
+            font-size: 1.4em; /* フォントサイズを少し小さく */
             line-height: 1;
         }
         .item-row.dragging {
