@@ -388,7 +388,7 @@
     <!-- 確認モーダル -->
     <div id="confirmation-modal" class="modal-overlay">
         <div class="modal-content">
-            <p id="modal-message">この記録を本当に削除しますか？</p>
+            <p id="modal-message">このセッション記録を本当に削除しますか？</p>
             <div class="modal-buttons">
                 <button id="modal-cancel-btn" class="remove-button" style="background-color: transparent;">キャンセル</button>
                 <button id="modal-confirm-btn">削除</button>
@@ -462,7 +462,7 @@
         }
         
         function confirmRemoveSessionLog(buttonElement) {
-            showConfirmationModal("この記録を本当に削除しますか？", () => {
+            showConfirmationModal("このセッション記録を本当に削除しますか？", () => {
                 removeDynamicItem(buttonElement);
             });
         }
