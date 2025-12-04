@@ -3,395 +3,624 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>慈悲なきアイオニア非公式キャラエディター</title>
+    <title>慈悲なきアイオニア 非公式キャラエディター</title>
+    <!-- フォントの読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --bg-body: #0f1115;
+            --bg-panel: #1a1d23;
+            --bg-input: #252a33;
+            --border-color: #383f4d;
+            --accent-primary: #cf3a3a; /* 落ち着いた赤 */
+            --accent-secondary: #4a90e2; /* 青（装飾用） */
+            --text-main: #e0e6ed;
+            --text-muted: #949ca8;
+            --danger: #e74c3c;
+            --success: #27ae60;
+            --radius: 6px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+            outline: none;
+        }
+
         body {
-            font-family: sans-serif;
+            font-family: 'Noto Sans JP', sans-serif;
             line-height: 1.6;
-            margin: 20px;
-            background-color: #121212; /* 黒背景 */
-            color: #f0f0f0; /* 白字 */
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            padding-bottom: 80px; /* フッター用スペース */
         }
+
+        /* --- レイアウト --- */
         .container {
-            max-width: 1200px; /* 最大幅を広げて2列表示に対応 */
-            margin-left: auto;   /* 中央寄せ */
-            margin-right: auto;  /* 中央寄せ */
-            background-color: #1e1e1e; /* やや明るい黒 */
+            max-width: 1280px;
+            margin: 0 auto;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(255,255,255,0.05); /* 白い影を薄く */
         }
-        h1, h2, h3 {
-            color: #e0e0e0; /* やや明るい白 */
-            border-bottom: 2px solid #444; /* 暗めのボーダー */
-            padding-bottom: 5px;
+
+        header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        h1{
-            font-size: 18px; /* h1タグの文字サイズを15ピクセルに設定 */
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 0.05em;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        
+        h1::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 24px;
+            background-color: var(--accent-primary);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        h3 {
+            font-size: 0.95rem;
+            color: var(--accent-secondary);
+            margin: 15px 0 10px;
+            font-weight: 500;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+
+        /* --- 入力要素 --- */
         label {
             display: block;
-            margin-top: 10px;
-            font-weight: bold;
-            color: #cccccc; /* ややグレーがかった白 */
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            margin-top: 12px;
         }
+
+        label:first-child { margin-top: 0; }
+
         input[type="text"],
         input[type="number"],
         textarea,
         select {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #555; /* 暗めのボーダー */
-            border-radius: 4px;
-            box-sizing: border-box;
-            background-color: #333; /* 暗い入力欄背景 */
-            color: #f0f0f0; /* 入力文字は白 */
-            font-size: 16px; /* 文字サイズを大きくする */
+            width: 100%;
+            padding: 10px 12px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        input[type="text"]::placeholder,
-        textarea::placeholder {
-            color: #aaa; /* プレースホルダーの色 */
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(207, 58, 58, 0.2);
         }
+
         textarea {
-            height: 100px;
             resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
         }
-        input[type="checkbox"] {
-            margin-right: 5px;
-            vertical-align: middle;
-            accent-color: #007bff; /* チェックボックスの色はアクセントカラー */
+
+        /* --- ステータス表示 --- */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
         }
-        .inline-inputs {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+
+        .status-box {
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
         }
-        .inline-inputs input[type="text"],
-        .inline-inputs select {
-            width: auto;
-            flex-grow: 1;
+
+        .status-box label {
+            margin: 0 0 5px 0;
+            font-size: 0.8rem;
         }
-        button {
-            background-color: transparent;
-            color: #007bff;
-            padding: 10px 15px;
-            border: 1px solid #007bff;
-            border-radius: 4px;
+
+        .status-value {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+        
+        #experiencePointsDisplay { color: var(--accent-secondary); }
+        #scarsDisplay { color: var(--danger); }
+
+        /* --- 一般技能 (Checkbox Grid) --- */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .skill-item {
+            position: relative;
+        }
+
+        .skill-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
             cursor: pointer;
-            margin-top: 10px;
-            font-size: 1em;
-            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            height: 0;
+            width: 0;
         }
-        button:hover {
-            background-color: #007bff;
-            color: white;
+
+        .skill-item label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 8px 4px;
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            user-select: none;
+            color: var(--text-muted);
         }
-        .remove-button {
-            color: #dc3545;
-            border-color: #dc3545;
-            padding: 2px 10px;
-            font-size: 1.2em;
-            font-weight: bold;
-            line-height: 1;
-            min-width: auto;
-            flex-shrink: 0;
+
+        .skill-item input[type="checkbox"]:checked + label {
+            background-color: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #fff;
+            font-weight: 700;
+            box-shadow: 0 0 8px rgba(207, 58, 58, 0.4);
         }
-        .remove-button:hover {
-            background-color: #dc3545;
-            color: white;
-        }
-        #cocofolia-export-btn {
-            color: #28a745;
-            border-color: #28a745;
-            margin-left: 10px;
-        }
-        #cocofolia-export-btn:hover {
-            background-color: #28a745;
-            color: white;
-        }
+
+        /* --- 動的アイテム行 --- */
         .item-row {
             display: flex;
             gap: 10px;
             align-items: center;
-            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
             padding: 10px;
-            border: 1px solid #444;
-            border-radius: 4px;
-            background-color: #2a2a2a;
-            flex-wrap: wrap;
+            margin-bottom: 10px;
+            border-radius: var(--radius);
+            transition: background-color 0.2s;
         }
-        .item-row select { flex-basis: 150px; flex-shrink: 0; }
-        .item-row input[type="text"] { flex-grow: 1; }
-        .item-row input[type="checkbox"] { flex-basis: 20px; flex-shrink: 0; }
-        .item-row button { margin-top: 0; }
-        .description-field {
-            flex-basis: 100% !important;
-            margin-top: 8px;
-        }
-        .dynamic-feat-name + .description-field {
-            margin-left: 0;
-        }
-        .status-display {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 5px;
-            color: #00aaff;
-        }
-        .section {
-            margin-bottom: 30px;
-            padding: 15px;
-            background-color: #252525;
-            border-radius: 5px;
-        }
-        .flex-container {
-            display: flex;
-            gap: 20px;
-        }
-        .flex-item {
-            flex: 1;
-        }
-        #initialWeaknessDescription {
-            background-color: #404040;
-            color: #888;
-        }
-        #initialWeaknessDescription:not(:disabled) {
-            background-color: #333;
-            color: #f0f0f0;
-        }
-        input[type="file"] {
-            color: #ccc;
-        }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #2c2c2c; }
-        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #777; }
 
-        .main-layout {
+        .item-row:hover {
+            background-color: rgba(255, 255, 255, 0.06);
+        }
+        
+        .item-row.dragging {
+            opacity: 0.5;
+            border: 1px dashed var(--text-muted);
+        }
+
+        .drag-handle {
+            color: var(--text-muted);
+            cursor: grab;
+            font-size: 1.2rem;
+            padding: 0 5px;
             display: flex;
-            gap: 20px;
-            align-items: flex-start;
+            align-items: center;
         }
-        .layout-column {
-            flex: 1;
-            min-width: 0;
+        .drag-handle:active { cursor: grabbing; }
+
+        .item-content {
+            flex-grow: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
         }
-        @media (max-width: 800px) {
-            .main-layout { flex-direction: column; }
-            .layout-column { width: 100%; }
+
+        /* --- ボタン --- */
+        button {
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius);
+            padding: 8px 16px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
-        #experience-tracker {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background-color: rgba(30, 30, 30, 0.9);
-            color: #e0e0e0;
-            padding: 12px 18px;
-            border-radius: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            z-index: 1000;
-            font-size: 1.1em;
-            font-weight: bold;
-            border: 1px solid #444;
-            backdrop-filter: blur(5px);
+
+        /* 追加ボタン */
+        .add-btn {
+            width: 100%;
+            background-color: transparent;
+            border: 1px dashed var(--text-muted);
+            color: var(--text-muted);
+            margin-top: 5px;
         }
+        
+        .add-btn:hover {
+            border-color: var(--accent-secondary);
+            color: var(--accent-secondary);
+            background-color: rgba(74, 144, 226, 0.1);
+        }
+
+        /* 削除ボタン */
+        .remove-button {
+            background: transparent;
+            color: var(--text-muted);
+            padding: 4px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 1px solid transparent;
+        }
+        
+        .remove-button:hover {
+            color: var(--danger);
+            background-color: rgba(231, 76, 60, 0.1);
+            border-color: rgba(231, 76, 60, 0.3);
+        }
+
+        /* メインアクションボタン */
+        .action-btn {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 12px;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--border-color);
+        }
+
+        .cocofolia-btn {
+            background-color: rgba(39, 174, 96, 0.15);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+        
+        .cocofolia-btn:hover {
+            background-color: var(--success);
+            color: white;
+        }
+
+        /* --- 折りたたみヘッダー --- */
         .collapsible-header {
             cursor: pointer;
             user-select: none;
-            position: relative;
-            padding-right: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        
+        .collapsible-header:hover {
+            color: var(--text-main);
+        }
+
         .collapsible-header::after {
-            content: "∧";
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-weight: bold;
-            color: #00aaff;
-            transition: transform 0.2s ease;
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid var(--accent-secondary);
+            border-bottom: 2px solid var(--accent-secondary);
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+            margin-right: 5px;
         }
+
         .collapsible-header.collapsed::after {
-            content: "∨";
+            transform: rotate(-135deg);
         }
+
+        .collapsible-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
         .collapsible-content.hidden {
             display: none;
         }
-        .drag-handle {
-            cursor: move;
-            user-select: none;
-            padding: 0 2px;
-            color: #888;
-            font-size: 1.4em;
-            line-height: 1;
-        }
-        .item-row.dragging {
-            opacity: 0.5;
-            background: #444;
+
+        /* --- スティッキーフッター (HUD) --- */
+        #experience-tracker {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(26, 29, 35, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            padding: 10px 30px;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-family: 'Roboto Mono', monospace;
         }
 
-        /* --- 確認モーダルのスタイル --- */
+        #experience-tracker .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #experience-tracker-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        /* --- モーダル --- */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 2000;
             visibility: hidden;
             opacity: 0;
-            transition: opacity 0.2s ease, visibility 0s 0.2s linear;
+            transition: 0.2s ease;
         }
+        
         .modal-overlay.visible {
             visibility: visible;
             opacity: 1;
-            transition: opacity 0.2s ease;
         }
+        
         .modal-content {
-            background-color: #252525;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            text-align: center;
+            background-color: var(--bg-panel);
+            padding: 30px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             max-width: 400px;
             width: 90%;
+            text-align: center;
         }
+
         .modal-buttons {
-            margin-top: 20px;
             display: flex;
+            gap: 10px;
             justify-content: center;
-            gap: 15px;
+            margin-top: 25px;
         }
-        .modal-buttons button {
-            min-width: 100px;
+        
+        .btn-confirm {
+            background-color: var(--danger);
+            color: white;
         }
+        .btn-cancel {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        /* ユーティリティ */
+        .flex-row { display: flex; gap: 10px; width: 100%; }
+        .flex-grow { flex-grow: 1; }
+        .w-auto { width: auto; }
+        .mt-2 { margin-top: 10px; }
+        .text-sm { font-size: 0.85rem; }
+        .badge {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        /* スクロールバー */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>慈悲なきアイオニア　非公式ツール</h1>
+        <header>
+            <h1>慈悲なきアイオニア <span style="font-size:0.6em; color:var(--text-muted); font-weight:400; margin-left:10px;">Unofficial Character Editor</span></h1>
+        </header>
+
         <div class="main-layout">
-            <!-- 左列 -->
-            <div class="layout-column" id="left-column">
+            <!-- 左カラム -->
+            <div class="layout-column">
+                
+                <!-- 基本情報 -->
                 <div class="section">
                     <h2>基本情報</h2>
-                    <div>
-                        <label for="characterName">キャラクター名:</label>
-                        <input type="text" id="characterName" onchange="updateAllStats()">
-                    </div>
-                    <div>
-                        <label for="characterRace">種族:</label>
-                        <input type="text" id="characterRace" onchange="updateAllStats()">
-                    </div>
-                    <div>
-                        <label for="characterSetting">キャラクター設定:</label>
-                        <textarea id="characterSetting" onchange="updateAllStats()"></textarea>
-                    </div>
+                    <label for="characterName">キャラクター名</label>
+                    <input type="text" id="characterName" onchange="updateAllStats()" placeholder="名前を入力">
+                    
+                    <label for="characterRace">種族</label>
+                    <input type="text" id="characterRace" onchange="updateAllStats()" placeholder="種族を入力">
+                    
+                    <label for="characterSetting">キャラクター設定</label>
+                    <textarea id="characterSetting" onchange="updateAllStats()" placeholder="背景や性格などの設定"></textarea>
                 </div>
-                        
+
+                <!-- ステータス -->
                 <div class="section">
                     <h2>ステータス</h2>
-                    <div class="flex-container">
-                        <div class="flex-item">
-                            <label>経験点:</label>
-                            <div id="experiencePointsDisplay" class="status-display">100</div>
+                    <div class="status-grid">
+                        <div class="status-box">
+                            <label>経験点</label>
+                            <div id="experiencePointsDisplay" class="status-value">100</div>
                         </div>
-                        <div class="flex-item">
-                            <label>傷痕:</label>
-                            <div id="scarsDisplay" class="status-display">0</div>
+                        <div class="status-box">
+                            <label>傷痕</label>
+                            <div id="scarsDisplay" class="status-value">0</div>
                         </div>
-                        <div class="flex-item">
-                            <label for="initialScars">初期傷痕 (0-10):</label>
-                            <input type="number" id="initialScars" min="0" max="10" value="0" onchange="updateAllStats()">
+                        <div class="status-box">
+                            <label>荷重</label>
+                            <div id="loadDisplay" class="status-value" style="color:var(--text-main);">0</div>
                         </div>
                     </div>
+                    <label for="initialScars">初期傷痕 (0-10)</label>
+                    <input type="number" id="initialScars" min="0" max="10" value="0" onchange="updateAllStats()">
                 </div>
 
+                <!-- 弱点 -->
                 <div class="section">
-                    <h2 class="collapsible-header collapsed" onclick="toggleSection('weaknessesContent')">弱点</h2>
-                    <div id="weaknessesContent" class="collapsible-content hidden">
-                        <div id="weaknessesContainer"></div>
-                        <button type="button" onclick="addWeakness()">弱点を追加</button>
-                        <h3>初期弱点</h3>
-                        <div>
-                            <input type="checkbox" id="initialWeaknessCheck" onchange="toggleInitialWeaknessDescription(); updateAllStats();">
-                            <label for="initialWeaknessCheck" style="display:inline;">初期弱点を負う（経験点+10）</label>
+                    <h2 class="collapsible-header" onclick="toggleSection('weaknessesContent')">弱点</h2>
+                    <div id="weaknessesContent" class="collapsible-content">
+                        <div style="background: rgba(231, 76, 60, 0.05); padding: 10px; border-radius: var(--radius); margin-bottom: 15px; border: 1px solid rgba(231, 76, 60, 0.2);">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom: 8px;">
+                                <input type="checkbox" id="initialWeaknessCheck" onchange="toggleInitialWeaknessDescription(); updateAllStats();" style="width:auto; margin:0;">
+                                <label for="initialWeaknessCheck" style="margin:0; cursor:pointer; color:var(--text-main);">初期弱点を負う（経験点+10）</label>
+                            </div>
                             <input type="text" id="initialWeaknessDescription" placeholder="初期弱点の詳細" disabled onchange="updateAllStats()">
                         </div>
+
+                        <div id="weaknessesContainer"></div>
+                        <button type="button" class="add-btn" onclick="addWeakness()">＋ 弱点を追加</button>
                     </div>
                 </div>
 
+                <!-- 技能 -->
                 <div class="section">
-                    <h2 class="collapsible-header collapsed" onclick="toggleSection('skillsContent')">技能</h2>
-                    <div id="skillsContent" class="collapsible-content hidden">
+                    <h2 class="collapsible-header" onclick="toggleSection('skillsContent')">技能</h2>
+                    <div id="skillsContent" class="collapsible-content">
                         <h3>一般技能</h3>
-                        <div id="generalSkillsContainer"></div>
+                        <div id="generalSkillsContainer" class="skills-grid">
+                            <!-- JSで生成 -->
+                        </div>
+
                         <h3>専門技能</h3>
                         <div id="specialSkillsContainer"></div>
-                        <button type="button" onclick="addSpecialSkill()">専門技能を追加</button>
+                        <button type="button" class="add-btn" onclick="addSpecialSkill()">＋ 専門技能を追加</button>
                     </div>
                 </div>
 
+                <!-- 特技 -->
                 <div class="section">
-                    <h2 class="collapsible-header collapsed" onclick="toggleSection('featsContent')">特技</h2>
-                    <div id="featsContent" class="collapsible-content hidden">
+                    <h2 class="collapsible-header" onclick="toggleSection('featsContent')">特技</h2>
+                    <div id="featsContent" class="collapsible-content">
                         <div id="featsContainer"></div>
-                        <button type="button" onclick="addFeat()">特技を追加</button>
+                        <button type="button" class="add-btn" onclick="addFeat()">＋ 特技を追加</button>
                     </div>
                 </div>
             </div>
 
-            <!-- 右列 -->
-            <div class="layout-column" id="right-column">
+            <!-- 右カラム -->
+            <div class="layout-column">
+                
+                <!-- 装備品 -->
                 <div class="section">
-                    <h2 class="collapsible-header collapsed" onclick="toggleSection('equipmentContent')">装備品</h2>
-                    <div id="equipmentContent" class="collapsible-content hidden">
-                        <label>荷重:</label>
-                        <div id="loadDisplay" class="status-display">0</div>
+                    <h2 class="collapsible-header" onclick="toggleSection('equipmentContent')">装備品</h2>
+                    <div id="equipmentContent" class="collapsible-content">
                         <h3>武器</h3>
                         <div id="weaponsContainer"></div>
-                        <button type="button" onclick="addWeapon()">武器を追加</button>
+                        <button type="button" class="add-btn" onclick="addWeapon()">＋ 武器を追加</button>
+
                         <h3>防具</h3>
                         <div id="armorsContainer"></div>
-                        <button type="button" onclick="addArmor()">防具を追加</button>
+                        <button type="button" class="add-btn" onclick="addArmor()">＋ 防具を追加</button>
                     </div>
                 </div>
 
+                <!-- セッション記録 -->
                 <div class="section">
-                    <h2 class="collapsible-header collapsed" onclick="toggleSection('sessionLogsContent')">セッションの記録</h2>
-                    <div id="sessionLogsContent" class="collapsible-content hidden">
+                    <h2 class="collapsible-header" onclick="toggleSection('sessionLogsContent')">セッションの記録</h2>
+                    <div id="sessionLogsContent" class="collapsible-content">
                         <div id="sessionLogsContainer"></div>
-                        <button type="button" onclick="addSessionLog()">セッション記録を追加</button>
+                        <button type="button" class="add-btn" onclick="addSessionLog()">＋ セッション記録を追加</button>
                     </div>
                 </div>
 
+                <!-- データ管理 -->
                 <div class="section">
                     <h2>データ管理</h2>
-                    <button type="button" onclick="exportData()">データを保存</button>
-                    <button type="button" id="cocofolia-export-btn" onclick="exportForCocofolia()">ココフォリア駒出力</button>
-                    <label for="importFile" style="margin-top: 15px;">データをロード:</label>
-                    <input type="file" id="importFile" accept=".txt" onchange="importData(event)">
+                    <button type="button" class="action-btn" onclick="exportData()">データを保存 (.txt)</button>
+                    <button type="button" id="cocofolia-export-btn" class="action-btn cocofolia-btn" onclick="exportForCocofolia()">ココフォリア駒出力 (クリップボード)</button>
+                    
+                    <label for="importFile" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">データをロード</label>
+                    <input type="file" id="importFile" accept=".txt" onchange="importData(event)" style="background:transparent; border:none; padding-left:0;">
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 経験点トラッカー -->
+    <!-- 経験点トラッカー (HUD) -->
     <div id="experience-tracker">
-        経験点: <span id="experience-tracker-value">100</span>
+        <span class="label">EXP</span>
+        <span id="experience-tracker-value">100</span>
     </div>
 
     <!-- 確認モーダル -->
     <div id="confirmation-modal" class="modal-overlay">
         <div class="modal-content">
-            <p id="modal-message">このセッション記録を本当に削除しますか？</p>
+            <h3 style="margin-top:0; color:var(--text-main);">確認</h3>
+            <p id="modal-message" style="color:var(--text-muted);">この項目を削除しますか？</p>
             <div class="modal-buttons">
-                <button id="modal-cancel-btn" class="remove-button" style="background-color: transparent;">キャンセル</button>
-                <button id="modal-confirm-btn">削除</button>
+                <button id="modal-cancel-btn" class="btn-cancel">キャンセル</button>
+                <button id="modal-confirm-btn" class="btn-confirm">削除</button>
             </div>
         </div>
     </div>
@@ -414,13 +643,15 @@
             updateAllStats();
             setupDragAndDrop('specialSkillsContainer');
             setupDragAndDrop('featsContainer');
+            setupDragAndDrop('weaponsContainer');
+            setupDragAndDrop('armorsContainer');
             setupConfirmationModal();
         });
 
         // --- セクション表示切替関数 ---
         function toggleSection(contentId) {
             const content = document.getElementById(contentId);
-            const header = content.previousElementSibling;
+            const header = document.querySelector(`.collapsible-header[onclick="toggleSection('${contentId}')"]`);
             content.classList.toggle('hidden');
             header.classList.toggle('collapsed');
         }
@@ -430,8 +661,12 @@
             container.innerHTML = '';
             generalSkillNames.forEach(skillName => {
                 const div = document.createElement('div');
+                div.className = 'skill-item';
                 const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
-                div.innerHTML = `<input type="checkbox" id="${checkboxId}" name="${skillName}" onchange="updateAllStats()"><label for="${checkboxId}" style="display:inline; font-weight:normal;">${skillName}</label>`;
+                div.innerHTML = `
+                    <input type="checkbox" id="${checkboxId}" name="${skillName}" onchange="updateAllStats()">
+                    <label for="${checkboxId}">${skillName}</label>
+                `;
                 container.appendChild(div);
             });
         }
@@ -456,22 +691,40 @@
         function removeDynamicItem(buttonElement) {
             const itemRow = buttonElement.closest('.item-row');
             if (itemRow) {
-                itemRow.remove();
-                updateAllStats();
+                // アニメーション用
+                itemRow.style.opacity = '0';
+                itemRow.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    itemRow.remove();
+                    updateAllStats();
+                }, 200);
             }
         }
-        
+       
         function confirmRemoveSessionLog(buttonElement) {
             showConfirmationModal("このセッション記録を本当に削除しますか？", () => {
                 removeDynamicItem(buttonElement);
             });
         }
 
+        function createRemoveButton(onclickFunc = "removeDynamicItem(this)") {
+            return `<button type="button" class="remove-button" onclick="${onclickFunc}" title="削除">×</button>`;
+        }
+
+        function createDragHandle() {
+            return `<span class="drag-handle">☰</span>`;
+        }
+
         function addWeakness() {
             addDynamicItem('weaknessesContainer', (index) => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
-                div.innerHTML = `<input type="text" placeholder="弱点の詳細" class="dynamic-weakness" onchange="updateAllStats()"><button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>`;
+                div.innerHTML = `
+                    <div class="item-content">
+                        <input type="text" placeholder="弱点の詳細" class="dynamic-weakness" onchange="updateAllStats()">
+                    </div>
+                    ${createRemoveButton()}
+                `;
                 return div;
             });
         }
@@ -482,8 +735,14 @@
                 div.className = 'item-row';
                 div.draggable = true;
                 let optionsHtml = specialSkillBaseTypes.map(type => `<option value="${type}">${type}</option>`).join('');
-                div.innerHTML = `<span class="drag-handle">☰</span><select class="dynamic-special-skill-type" onchange="updateAllStats()"></select><input type="text" placeholder="専門技能名・詳細" class="dynamic-special-skill-name" onchange="updateAllStats()"><button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>`;
-                div.querySelector('.dynamic-special-skill-type').innerHTML = optionsHtml;
+                div.innerHTML = `
+                    ${createDragHandle()}
+                    <div class="item-content">
+                        <select class="dynamic-special-skill-type w-auto" onchange="updateAllStats()">${optionsHtml}</select>
+                        <input type="text" placeholder="専門技能名・詳細" class="dynamic-special-skill-name flex-grow" onchange="updateAllStats()">
+                    </div>
+                    ${createRemoveButton()}
+                `;
                 return div;
             });
         }
@@ -494,8 +753,21 @@
                 div.className = 'item-row';
                 div.draggable = true;
                 let typeOptionsHtml = featTypes.map(type => `<option value="${type}">${type}</option>`).join('');
-                div.innerHTML = `<span class="drag-handle">☰</span><div style="flex: 1; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;"><div style="display: flex; justify-content: space-between; align-items: center; width: 100%;"><label style="margin-top:0; display:flex; align-items:center; font-weight:normal; color: #f0f0f0; font-size: 0.9em; white-space: nowrap;"><input type="checkbox" class="dynamic-feat-reward" onchange="updateAllStats()" style="margin-right:5px;"> シナリオ報酬</label><button type="button" class="remove-button" onclick="removeDynamicItem(this)">×</button></div><select class="dynamic-feat-type" style="flex-basis: 90px;" onchange="updateAllStats()"></select><input type="text" placeholder="特技名" class="dynamic-feat-name" style="flex-grow: 1;" onchange="updateAllStats()"><textarea placeholder="特技説明" class="dynamic-feat-description description-field" style="height: 60px;" onchange="updateAllStats()"></textarea></div>`;
-                div.querySelector('.dynamic-feat-type').innerHTML = typeOptionsHtml;
+                div.innerHTML = `
+                    ${createDragHandle()}
+                    <div class="item-content" style="flex-direction: column; align-items: stretch;">
+                        <div class="flex-row">
+                            <select class="dynamic-feat-type w-auto" onchange="updateAllStats()">${typeOptionsHtml}</select>
+                            <input type="text" placeholder="特技名" class="dynamic-feat-name flex-grow" onchange="updateAllStats()">
+                        </div>
+                        <textarea placeholder="特技説明" class="dynamic-feat-description mt-2" style="height: 60px;" onchange="updateAllStats()"></textarea>
+                        <div class="flex-row" style="align-items:center; margin-top:5px;">
+                            <input type="checkbox" class="dynamic-feat-reward" id="feat_reward_${Date.now()}" onchange="updateAllStats()" style="width:auto; margin:0;">
+                            <label for="feat_reward_${Date.now()}" style="margin:0; font-weight:normal; cursor:pointer;">シナリオ報酬 (経験点消費なし)</label>
+                        </div>
+                    </div>
+                    <div style="align-self: flex-start;">${createRemoveButton()}</div>
+                `;
                 return div;
             });
         }
@@ -504,9 +776,16 @@
             addDynamicItem('weaponsContainer', (index) => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
+                div.draggable = true;
                 let optionsHtml = Object.keys(weaponTypes).map(type => `<option value="${type}">${type}</option>`).join('');
-                div.innerHTML = `<select class="dynamic-weapon-type" onchange="updateAllStats()"></select><input type="text" placeholder="武器名・詳細" class="dynamic-weapon-description" onchange="updateAllStats()"><button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>`;
-                div.querySelector('.dynamic-weapon-type').innerHTML = optionsHtml;
+                div.innerHTML = `
+                    ${createDragHandle()}
+                    <div class="item-content">
+                        <select class="dynamic-weapon-type w-auto" onchange="updateAllStats()">${optionsHtml}</select>
+                        <input type="text" placeholder="武器名・詳細" class="dynamic-weapon-description flex-grow" onchange="updateAllStats()">
+                    </div>
+                    ${createRemoveButton()}
+                `;
                 return div;
             });
         }
@@ -515,9 +794,16 @@
             addDynamicItem('armorsContainer', (index) => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
+                div.draggable = true;
                 let optionsHtml = Object.keys(armorTypes).map(type => `<option value="${type}">${type}</option>`).join('');
-                div.innerHTML = `<select class="dynamic-armor-type" onchange="updateAllStats()"></select><input type="text" placeholder="防具名・詳細" class="dynamic-armor-description" onchange="updateAllStats()"><button type="button" class="remove-button" onclick="removeDynamicItem(this)" style="margin-left: auto;">×</button>`;
-                div.querySelector('.dynamic-armor-type').innerHTML = optionsHtml;
+                div.innerHTML = `
+                    ${createDragHandle()}
+                    <div class="item-content">
+                        <select class="dynamic-armor-type w-auto" onchange="updateAllStats()">${optionsHtml}</select>
+                        <input type="text" placeholder="防具名・詳細" class="dynamic-armor-description flex-grow" onchange="updateAllStats()">
+                    </div>
+                    ${createRemoveButton()}
+                `;
                 return div;
             });
         }
@@ -528,7 +814,23 @@
                 div.className = 'item-row';
                 div.style.flexDirection = 'column';
                 div.style.alignItems = 'stretch';
-                div.innerHTML = `<input type="text" placeholder="シナリオ名" class="dynamic-session-title" onchange="updateAllStats()"><div class="inline-inputs" style="margin-top:5px;"><label style="margin-top:0; flex-basis:100px; font-size: 0.9em;">受けた傷痕:</label><input type="number" value="0" class="dynamic-session-scars" onchange="updateAllStats()" style="width:55px;"><label style="margin-top:0; flex-basis:100px; margin-left:10px; font-size: 0.9em;">追加経験点:</label><input type="number" value="0" class="dynamic-session-exp" onchange="updateAllStats()" style="width:55px;"></div><textarea placeholder="その他記録" class="dynamic-session-notes" style="margin-top:5px;" onchange="updateAllStats()"></textarea><button type="button" class="remove-button" onclick="confirmRemoveSessionLog(this)" style="align-self:flex-end;">×</button>`;
+                div.innerHTML = `
+                    <div class="flex-row">
+                        <input type="text" placeholder="シナリオ名" class="dynamic-session-title flex-grow" onchange="updateAllStats()">
+                        ${createRemoveButton("confirmRemoveSessionLog(this)")}
+                    </div>
+                    <div class="flex-row mt-2" style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px;">
+                        <div style="flex:1;">
+                            <label class="text-sm" style="margin:0;">傷痕</label>
+                            <input type="number" value="0" class="dynamic-session-scars" onchange="updateAllStats()">
+                        </div>
+                        <div style="flex:1;">
+                            <label class="text-sm" style="margin:0;">追加経験点</label>
+                            <input type="number" value="0" class="dynamic-session-exp" onchange="updateAllStats()">
+                        </div>
+                    </div>
+                    <textarea placeholder="メモ・記録" class="dynamic-session-notes mt-2" style="height: 60px;" onchange="updateAllStats()"></textarea>
+                `;
                 return div;
             });
         }
@@ -538,25 +840,40 @@
             let currentExperience = 100;
             const initialScarsValue = parseInt(document.getElementById('initialScars').value) || 0;
             currentExperience += initialScarsValue;
+            
             if (document.getElementById('initialWeaknessCheck').checked) { currentExperience += 10; }
+            
             let generalSkillsChecked = 0;
             generalSkillNames.forEach(skillName => {
                 const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
                 if (document.getElementById(checkboxId) && document.getElementById(checkboxId).checked) { generalSkillsChecked++; }
             });
+            
             currentExperience -= generalSkillsChecked * 10;
             currentExperience -= document.querySelectorAll('#specialSkillsContainer .item-row').length * 5;
+            
             const featRows = document.querySelectorAll('#featsContainer .item-row');
             currentExperience -= featRows.length * 5;
-            featRows.forEach(row => { if (row.querySelector('.dynamic-feat-reward')?.checked) { currentExperience += 5; } });
+            featRows.forEach(row => { 
+                if (row.querySelector('.dynamic-feat-reward')?.checked) { currentExperience += 5; } // 報酬ならコスト相殺(+5)
+            });
+            
             document.querySelectorAll('.dynamic-session-exp').forEach(input => { currentExperience += parseInt(input.value) || 0; });
+            
             experiencePoints = currentExperience;
             document.getElementById('experiencePointsDisplay').textContent = experiencePoints;
             document.getElementById('experience-tracker-value').textContent = experiencePoints;
+            
+            // 色変えロジック
+            const expTracker = document.getElementById('experience-tracker-value');
+            if(experiencePoints < 0) expTracker.style.color = 'var(--danger)';
+            else expTracker.style.color = 'var(--accent-primary)';
+
             let currentScars = initialScarsValue;
             document.querySelectorAll('.dynamic-session-scars').forEach(input => { currentScars += parseInt(input.value) || 0; });
             scars = currentScars;
             document.getElementById('scarsDisplay').textContent = scars;
+            
             let currentLoad = 0;
             document.querySelectorAll('#weaponsContainer .item-row').forEach(row => {
                 const type = row.querySelector('.dynamic-weapon-type')?.value;
@@ -569,18 +886,21 @@
             load = currentLoad;
             document.getElementById('loadDisplay').textContent = load;
         }
-        
+       
         // --- ドラッグ＆ドロップ機能 ---
         function setupDragAndDrop(containerId) {
             const container = document.getElementById(containerId);
             let draggingElement = null;
+            
             container.addEventListener('dragstart', e => {
                 const targetRow = e.target.closest('.item-row');
                 if (targetRow && targetRow.parentElement === container) {
                     draggingElement = targetRow;
                     setTimeout(() => { draggingElement.classList.add('dragging'); }, 0);
+                    e.dataTransfer.effectAllowed = 'move';
                 }
             });
+            
             container.addEventListener('dragend', () => {
                 if (draggingElement) {
                     draggingElement.classList.remove('dragging');
@@ -588,6 +908,7 @@
                     updateAllStats();
                 }
             });
+            
             container.addEventListener('dragover', e => {
                 e.preventDefault();
                 if (!draggingElement) return;
@@ -598,6 +919,8 @@
                     container.insertBefore(draggingElement, afterElement);
                 }
             });
+
+            // タッチデバイス対応は基本実装のまま
             container.addEventListener('touchstart', e => {
                 const handle = e.target.closest('.drag-handle');
                 if (!handle) return;
@@ -605,8 +928,11 @@
                 if (targetRow && targetRow.parentElement === container) {
                     draggingElement = targetRow;
                     draggingElement.classList.add('dragging');
+                    // スクロール防止
+                    document.body.style.overflow = 'hidden';
                 }
-            }, { passive: true });
+            }, { passive: false });
+
             container.addEventListener('touchmove', e => {
                 if (!draggingElement) return;
                 e.preventDefault();
@@ -618,10 +944,12 @@
                     container.insertBefore(draggingElement, afterElement);
                 }
             }, { passive: false });
+
             container.addEventListener('touchend', () => {
                 if (draggingElement) {
                     draggingElement.classList.remove('dragging');
                     draggingElement = null;
+                    document.body.style.overflow = ''; // スクロール再開
                     updateAllStats();
                 }
             });
@@ -653,7 +981,7 @@
                 confirmCallback = onConfirm;
                 modal.classList.add('visible');
             };
-            
+           
             const hideModal = () => {
                 modal.classList.remove('visible');
                 confirmCallback = null;
@@ -725,6 +1053,7 @@
                     applyData(data);
                 } catch (error) {
                     console.error("インポートエラー:", error);
+                    alert("ファイルの読み込みに失敗しました。フォーマットを確認してください。");
                 }
             };
             reader.readAsText(file);
@@ -739,14 +1068,17 @@
             document.getElementById('initialWeaknessCheck').checked = data.initialWeaknessCheck || false;
             document.getElementById('initialWeaknessDescription').value = data.initialWeaknessDescription || '';
             toggleInitialWeaknessDescription();
+            
             if (data.generalSkills) {
                 generalSkillNames.forEach(skillName => {
                     const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
                     if (document.getElementById(checkboxId)) { document.getElementById(checkboxId).checked = data.generalSkills[skillName] || false; }
                 });
             } else { populateGeneralSkills(); }
+            
             const containersToClear = ['weaknessesContainer', 'specialSkillsContainer', 'featsContainer', 'weaponsContainer', 'armorsContainer', 'sessionLogsContainer'];
             containersToClear.forEach(id => document.getElementById(id).innerHTML = '');
+            
             if (data.weaknesses) { data.weaknesses.forEach(text => { addWeakness(); const rows = document.querySelectorAll('#weaknessesContainer .item-row'); const lastRowInput = rows[rows.length - 1].querySelector('.dynamic-weakness'); if (lastRowInput) lastRowInput.value = text; }); }
             if (data.specialSkills) { data.specialSkills.forEach(skill => { addSpecialSkill(); const rows = document.querySelectorAll('#specialSkillsContainer .item-row'); const lastRow = rows[rows.length - 1]; if (lastRow) { lastRow.querySelector('.dynamic-special-skill-type').value = skill.type; lastRow.querySelector('.dynamic-special-skill-name').value = skill.name; } }); }
             if (data.feats) { data.feats.forEach(feat => { addFeat(); const rows = document.querySelectorAll('#featsContainer .item-row'); const lastRow = rows[rows.length - 1]; if (lastRow) { lastRow.querySelector('.dynamic-feat-type').value = feat.type; lastRow.querySelector('.dynamic-feat-name').value = feat.name; lastRow.querySelector('.dynamic-feat-description').value = feat.description; lastRow.querySelector('.dynamic-feat-reward').checked = feat.reward; } }); }
@@ -761,16 +1093,20 @@
             const hasLightArmor = data.armors.some(armor => armor.type === "軽装防具");
             const hasHeavyArmor = data.armors.some(armor => armor.type === "重装防具");
             const hasAnyArmor = hasLightArmor || hasHeavyArmor;
+            
             let paletteLines = ['// ----- 一般技能 -----'];
             generalSkillNames.forEach(skillName => {
                 const isAcquired = data.generalSkills[skillName];
                 paletteLines.push(`${isAcquired ? '2d10' : '1d10'} 《${skillName}》`);
             });
+            
             if (hasAnyArmor) { paletteLines.push('2d10+2 《防御(防具あり)》'); }
+            
             if (data.specialSkills.length > 0) {
                 paletteLines.push('// ----- 専門技能 -----');
                 data.specialSkills.forEach(skill => { if (skill.name) { paletteLines.push(`3d10 《${skill.type}：${skill.name}》`); } });
             }
+            
             const weaponTypesInUse = new Set(data.weapons.map(w => w.type));
             if (weaponTypesInUse.size > 0) {
                 paletteLines.push('// ----- ダメージ判定 -----');
@@ -779,37 +1115,72 @@
                 if (weaponTypesInUse.has("大型白兵武器")) { paletteLines.push('1d10 〈ダメージ判定：大型白兵武器〉'); }
                 if (weaponTypesInUse.has("射撃武器")) { paletteLines.push('1d8 〈ダメージ判定：射撃武器〉'); }
             }
+            
             paletteLines.push('// ----- ダメージ軽減 -----', '1d3 〈ダメージ軽減判定〉');
             if (hasHeavyArmor) { paletteLines.push('1d3+1 〈ダメージ軽減判定(重装防具あり)〉'); }
+            
             paletteLines.push('// ----- チェック -----', '1d100>={ダメージ}+{傷痕} 〈ダメージチェック〉', '1d100>={ストレス} 〈ストレスチェック〉');
+            
             const chatPalette = paletteLines.join('\n');
             let memoLines = [`種族: ${data.characterRace || '未設定'}`, '▼設定', data.characterSetting || '（設定なし）', '--------', '▼弱点'];
+            
             let hasWeakness = false;
             if (data.initialWeaknessCheck && data.initialWeaknessDescription) { memoLines.push(`・${data.initialWeaknessDescription} (初期)`); hasWeakness = true; }
             data.weaknesses.forEach(w => { if (w) { memoLines.push(`・${w}`); hasWeakness = true; } });
             if (!hasWeakness) memoLines.push('（弱点なし）');
+            
             memoLines.push('--------', '▼特技');
             if (data.feats.length > 0) { data.feats.forEach(f => { memoLines.push(`【${f.type}】${f.name}`, f.description); }); } else { memoLines.push('（特技なし）'); }
+            
             memoLines.push('--------', '▼装備');
             if (data.weapons.length > 0) { data.weapons.forEach(w => memoLines.push(`[武器] ${w.type}: ${w.description}`)); }
             if (data.armors.length > 0) { data.armors.forEach(a => memoLines.push(`[防具] ${a.type}: ${a.description}`)); }
             if (data.weapons.length === 0 && data.armors.length === 0) { memoLines.push('（装備なし）'); }
+            
             const memo = memoLines.join('\n');
             const scarsValue = parseInt(document.getElementById('scarsDisplay').textContent) || 0;
             const loadValue = parseInt(document.getElementById('loadDisplay').textContent) || 0;
+            
             const cocofoliaData = { kind: "character", data: { name: data.characterName || '無名のキャラクター', memo: memo, initiative: -loadValue, externalUrl: '', status: [{ label: "ダメージ", value: 0, max: 0 }, { label: "ストレス", value: 0, max: 0 }, { label: "傷痕", value: scarsValue, max: 0 }], params: [], commands: chatPalette } };
+            
             const jsonString = JSON.stringify(cocofoliaData, null, 2);
+            
+            // クリップボードAPIを優先使用し、フォールバックとしてexecCommandを使用
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(jsonString).then(() => {
+                    showExportSuccess();
+                }).catch(err => {
+                    console.error('Clipboard API failed', err);
+                    fallbackCopyTextToClipboard(jsonString);
+                });
+            } else {
+                fallbackCopyTextToClipboard(jsonString);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text) {
             const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = jsonString;
+            tempTextArea.value = text;
             document.body.appendChild(tempTextArea);
             tempTextArea.select();
             let success = false;
-            try { success = document.execCommand('copy'); } catch (err) { console.error('クリップボードへのコピーに失敗しました', err); }
+            try { success = document.execCommand('copy'); } catch (err) { console.error('execCommand copy failed', err); }
             document.body.removeChild(tempTextArea);
+            if (success) showExportSuccess();
+            else alert("コピーに失敗しました。");
+        }
+
+        function showExportSuccess() {
             const exportButton = document.getElementById('cocofolia-export-btn');
             const originalText = exportButton.textContent;
-            exportButton.textContent = success ? 'コピーしました！' : 'コピー失敗';
-            setTimeout(() => { exportButton.textContent = originalText; }, 2000);
+            exportButton.textContent = 'コピーしました！';
+            exportButton.style.backgroundColor = 'var(--success)';
+            exportButton.style.color = 'white';
+            setTimeout(() => { 
+                exportButton.textContent = originalText;
+                exportButton.style.backgroundColor = '';
+                exportButton.style.color = '';
+            }, 2000);
         }
     </script>
 </body>
