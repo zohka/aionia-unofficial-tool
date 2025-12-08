@@ -269,6 +269,20 @@
             align-items: center;
         }
 
+        /* プリセット選択用のスタイル */
+        .feat-preset-select {
+            width: 100%;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--accent-secondary);
+            border-color: rgba(74, 144, 226, 0.3);
+            background-color: rgba(0,0,0,0.2);
+        }
+        .feat-preset-select option {
+            background-color: var(--bg-panel);
+            color: var(--text-main);
+        }
+
         /* --- ボタン --- */
         button {
             cursor: pointer;
@@ -491,16 +505,16 @@
         <div class="main-layout">
             <!-- 左カラム -->
             <div class="layout-column">
-                
+               
                 <!-- 基本情報 -->
                 <div class="section">
                     <h2>基本情報</h2>
                     <label for="characterName">キャラクター名</label>
                     <input type="text" id="characterName" onchange="updateAllStats()" placeholder="名前を入力">
-                    
+                   
                     <label for="characterRace">種族</label>
                     <input type="text" id="characterRace" onchange="updateAllStats()" placeholder="種族を入力">
-                    
+                   
                     <label for="characterSetting">キャラクター設定</label>
                     <textarea id="characterSetting" onchange="updateAllStats()" placeholder="背景や性格などの設定"></textarea>
                 </div>
@@ -570,7 +584,7 @@
 
             <!-- 右カラム -->
             <div class="layout-column">
-                
+               
                 <!-- 装備品 -->
                 <div class="section">
                     <h2 class="collapsible-header" onclick="toggleSection('equipmentContent')">装備品</h2>
@@ -599,7 +613,7 @@
                     <h2>データ管理</h2>
                     <button type="button" class="action-btn" onclick="exportData()">データを保存 (.txt)</button>
                     <button type="button" id="cocofolia-export-btn" class="action-btn cocofolia-btn" onclick="exportForCocofolia()">ココフォリア駒出力 (クリップボード)</button>
-                    
+                   
                     <label for="importFile" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">データをロード</label>
                     <input type="file" id="importFile" accept=".txt" onchange="importData(event)" style="background:transparent; border:none; padding-left:0;">
                 </div>
@@ -626,6 +640,91 @@
     </div>
 
     <script>
+        // --- データベース (特技プリセット) ---
+        const featDatabase = {
+            "戦術": [
+                { name: "暗器", desc: "小型白兵武器時。攻撃回避時にインスタントで使用。+3ボーナスで1d3ダメージの反撃。" },
+                { name: "受け流し", desc: "被攻撃時にインスタント使用。-2ペナルティで防御を行う。" },
+                { name: "援護射撃", desc: "射撃武器時。味方の攻撃が回避された時にインスタント使用。+2ボーナスで1d3ダメージの追撃。" },
+                { name: "構え", desc: "中型白兵武器時。待機宣言時にインスタント使用。このラウンドの防御と中型白兵命中に+2。" },
+                { name: "騎乗戦闘", desc: "動物に騎乗して戦闘できる。荷重ペナルティ無視などの恩恵（GM判断）。" },
+                { name: "急所攻撃", desc: "小型白兵/非武装時。攻撃直前にインスタント使用。命中値が回避力より10以上高ければ+1d6ダメージ。" },
+                { name: "決死の覚悟", desc: "死亡ラウンド中に1度、コストなしで行動できる。自分の死を覆すことはできない。" },
+                { name: "曲射", desc: "射撃武器時。攻撃直前にインスタント使用。遮蔽ペナルティを無視する。" },
+                { name: "拳闘術", desc: "非武装攻撃時。非武装攻撃のダメージが1点ではなく1d6点になる。" },
+                { name: "護衛", desc: "味方をかばった時にインスタント使用。直後の防御判定ペナルティを無視する。" },
+                { name: "掃射", desc: "射撃武器時。攻撃直前にインスタント使用。集団の敵へのダメージ+2。" },
+                { name: "重撃", desc: "大型白兵武器時。攻撃直前にインスタント使用。相手の荷重が自分より3低ければ+2ダメージと回避-2付与。" },
+                { name: "捨て身の一撃", desc: "大型白兵武器時。攻撃直前にインスタント使用。+1d6ダメージを得るが、次の手番まで行動不可。" },
+                { name: "狙撃", desc: "射撃武器時。攻撃直前にインスタント使用。20m以遠への射撃ペナルティを無視（最大50m）。" },
+                { name: "挑発", desc: "敵の攻撃直前にインスタント使用。攻撃対象を自分に変更させる（GM判断）。" },
+                { name: "電光石火", desc: "R開始時にインスタント使用。難易度10運動判定成功で行動順を最初にする。攻撃は小型/非武装のみ可。" },
+                { name: "弾き落とし", desc: "中型白兵/防具時。射撃攻撃された時にインスタント使用。防御成功時の軽減+1。" },
+                { name: "パリイ", desc: "反撃直前にインスタント使用。反撃時、敵の必中攻撃に対して防御か回避を行える。成功で1点軽減。" },
+                { name: "突撃", desc: "中型白兵武器時。攻撃直前にインスタント使用。相手の荷重が自分より3高ければ+2ダメージ。" },
+                { name: "フェイント", desc: "小型/中型白兵時。攻撃直前にインスタント使用。敵の回避力が10以上なら命中+4。" },
+                { name: "薙ぎ払い", desc: "大型白兵武器時。攻撃直前にインスタント使用。集団の敵へのダメージ+1d6。" },
+                { name: "武器投げの習熟", desc: "小型/中型白兵時。武器投擲直前にインスタント使用。投擲判定を〈白兵〉で行える。" },
+                { name: "武器破壊", desc: "大型白兵武器時。攻撃直前にインスタント使用。命中時、敵の武器や爪牙を破損させる。" },
+                { name: "見切り", desc: "被攻撃時にインスタント使用。-2ペナルティで回避を行う。" },
+                { name: "不屈", desc: "自手番にインスタント使用。追加ストレス3点を受け、戦闘不能解除を試みる。" },
+                { name: "歩法", desc: "防具なし時。被攻撃時にインスタント使用。直後の回避+1。" },
+                { name: "鎧通し", desc: "小型白兵/非武装時。攻撃直前にインスタント使用。防御効果を無視した1点ダメージを与える。" }
+            ],
+            "魔術": [
+                { name: "灯り", desc: "半径5mを照らす光源を作る。30分持続。" },
+                { name: "居眠り", desc: "触媒必要。ストレス1点。警戒していない相手を眠らせる。3秒以上の接触が必要。" },
+                { name: "エンチャント：", desc: "触媒必要。名称に属性を追記。物質に属性を付与。武器なら+1ダメージ。ストレス2点。" },
+                { name: "音送り", desc: "30m以内の場所に、自分が発した音を飛ばす。" },
+                { name: "回復", desc: "触媒必要。インスタント。ストレス2点。判定成功で対象のダメージ半減・傷痕変換を行う。蘇生不可。" },
+                { name: "音消し", desc: "半径3m以内の音を消す。最大10分。維持にはストレス1点。" },
+                { name: "風読み", desc: "ストレス1点。1時間、空気の流れを知覚。空気の揺れによる奇襲ボーナス無効。" },
+                { name: "活性", desc: "触媒必要。接触してインスタント。ストレス3点。対象にコスト無しで戦闘不能解除を試みさせる。" },
+                { name: "恐怖", desc: "触媒必要。ストレス2点。判定成功で対象に幻覚を見せ、恐怖を与える。" },
+                { name: "警報", desc: "触媒必要。刻印に触れてストレス1点。1時間、半径3mの通行を感知し警報を脳内に送る。" },
+                { name: "結界", desc: "触媒必要。刻印に囲まれた場を作りストレス2点。30分間、霊的・魔術的干渉を遮断する。" },
+                { name: "幻影", desc: "実体のない幻を作り、簡単な動作をさせる。30秒持続。ストレス1点で10分に延長。" },
+                { name: "言霊", desc: "触媒必要。接触してストレス2点。判定成功で、交わした約束に魔術的拘束力を持たせる。" },
+                { name: "交信", desc: "ストレス1点。判定成功で、近くの霊や死儀霊から手掛かりを得る。" },
+                { name: "死儀霊：", desc: "触媒必要。霊を伴とする。ストレス1点で霊を物体に憑依させ、操ることができる。" },
+                { name: "治癒", desc: "触媒必要。ストレス1点。判定成功で、体内の毒性を取り除く。" },
+                { name: "通話", desc: "対となる刻印に触れてストレス1点。3日間、刻印同士で会話が可能になる（500m圏内）。" },
+                { name: "使い魔：", desc: "魔術生物を伴とする。インスタントで命令可。攻撃時は非武装扱い（1点ダメ）。" },
+                { name: "点火", desc: "10m以内の燃えやすいものに火をつける。または松明程度の火を消す。" },
+                { name: "範囲魔術", desc: "触媒必要。《魔術の得物》直前にインスタント、ストレス2点。集団へのダメージ+1d6。" },
+                { name: "光の筆", desc: "空中に光の線を描く。触媒があれば指を使わず思考で描ける（ストレス1点）。" },
+                { name: "被覆", desc: "触媒必要。ストレス1点。1m立方の物体に幻を被せ、別の物に見せる。10分持続。" },
+                { name: "浮遊", desc: "60kgまでの物を50cm浮かせ、水平移動させる。3R持続。垂直移動や攻撃利用は不可。" },
+                { name: "魔術の得物：", desc: "触媒必要。名称に属性を追記。アクション、ストレス3点。判定成功で遠隔攻撃、1d8+1ダメージ。" }
+            ],
+            "特徴": [
+                { name: "叡智：", desc: "名称に分野を追記。革新的な知識を有し、GM判断で恩恵を得る。" },
+                { name: "軽業", desc: "身軽さや平衡感覚が必要な判定にボーナスを得る。" },
+                { name: "過集中", desc: "プッシュ時、追加でストレス2点を受けることで、ボーナスをさらに+2点（計+7点）する。" },
+                { name: "看破", desc: "弱点や嘘を見破る判定にボーナスを得る。" },
+                { name: "希薄", desc: "名を知らない者から、記憶されにくくなる。" },
+                { name: "口車", desc: "口先のうまさが試される判定にボーナスを得る。" },
+                { name: "コネクション：", desc: "名称に人物/組織を追記。特定の相手に顔が利き、恩恵を得る。" },
+                { name: "様変わりの衣", desc: "アーティファクト「様変わりの衣」所持。ストレス1点で服装を自在に変化させる。" },
+                { name: "仕込み：", desc: "名称に物品を追記。所持品を何かに仕込み、隠蔽する。" },
+                { name: "スリの極意", desc: "接近しており、相手の意識が逸れているなら、戦闘中でも物を盗める。" },
+                { name: "自動筆記具", desc: "アーティファクト「自動筆記具」所持。思考を自動で記録する。" },
+                { name: "即席", desc: "即席で物を作成する判定にボーナスを得る。アイデアを得やすくなる。" },
+                { name: "底なしの鞄", desc: "アーティファクト「底なしの鞄」所持。大きさ制限なく物を収納できる（重量はそのまま）。" },
+                { name: "伝授", desc: "1時間指導することで、セッション中、対象の技能判定に+2ボーナス（回避/防御除く）。" },
+                { name: "調教：", desc: "名称に生物名を追記。生物を飼育し、命令できる。" },
+                { name: "天性の小手先", desc: "未取得の「一般技能」判定に常に+1のボーナスを得る。" },
+                { name: "踏破", desc: "過酷な自然環境での判定にボーナスを得る。ペナルティを無視する。" },
+                { name: "独自暗号", desc: "独自の暗号で秘密裏に会話や記録を行える。" },
+                { name: "なりすまし：", desc: "名称に対象を追記。1時間の練習で他者の言動や筆跡を模倣できる。" },
+                { name: "美貌", desc: "容姿や愛嬌が有利に働く判定にボーナスを得る。" },
+                { name: "二つ名：", desc: "名称に二つ名を追記。世間に知られており、威圧や交渉で恩恵を得る。" },
+                { name: "誉れ：", desc: "名称に地域/集団を追記。特定の場所で英雄視され、歓待される。" },
+                { name: "夜目", desc: "暗闇による視覚ペナルティを無視する。" },
+                { name: "分解力", desc: "毒やアルコールへの耐性を持ち、弱い毒性なら無効化する。" }
+            ]
+        };
+
         // 初期値
         let experiencePoints = 100;
         let scars = 0;
@@ -700,7 +799,7 @@
                 }, 200);
             }
         }
-       
+        
         function confirmRemoveSessionLog(buttonElement) {
             showConfirmationModal("このセッション記録を本当に削除しますか？", () => {
                 removeDynamicItem(buttonElement);
@@ -747,15 +846,34 @@
             });
         }
 
+        // --- 特技追加関数 (修正版) ---
         function addFeat() {
             addDynamicItem('featsContainer', (index) => {
                 const div = document.createElement('div');
                 div.className = 'item-row';
                 div.draggable = true;
+                
+                // タイプ選択肢
                 let typeOptionsHtml = featTypes.map(type => `<option value="${type}">${type}</option>`).join('');
+                
+                // プリセット選択肢の生成
+                let presetOptionsHtml = `<option value="">(特技リストから自動入力)</option>`;
+                for (const category in featDatabase) {
+                    presetOptionsHtml += `<optgroup label="${category}">`;
+                    featDatabase[category].forEach(feat => {
+                        // データ属性にJSON文字列を持たせておく
+                        const featJson = JSON.stringify({type: category, ...feat}).replace(/"/g, '&quot;');
+                        presetOptionsHtml += `<option value="${featJson}">${feat.name}</option>`;
+                    });
+                    presetOptionsHtml += `</optgroup>`;
+                }
+
                 div.innerHTML = `
                     ${createDragHandle()}
                     <div class="item-content" style="flex-direction: column; align-items: stretch;">
+                        <!-- プリセット選択 -->
+                        <select class="feat-preset-select" onchange="applyFeatPreset(this)">${presetOptionsHtml}</select>
+                        
                         <div class="flex-row">
                             <select class="dynamic-feat-type w-auto" onchange="updateAllStats()">${typeOptionsHtml}</select>
                             <input type="text" placeholder="特技名" class="dynamic-feat-name flex-grow" onchange="updateAllStats()">
@@ -770,6 +888,31 @@
                 `;
                 return div;
             });
+        }
+
+        // --- プリセット適用関数 ---
+        function applyFeatPreset(selectElement) {
+            const value = selectElement.value;
+            if (!value) return; // 空選択なら何もしない
+
+            try {
+                const featData = JSON.parse(value);
+                const itemRow = selectElement.closest('.item-row');
+                
+                // 各フィールドに値をセット
+                const typeSelect = itemRow.querySelector('.dynamic-feat-type');
+                const nameInput = itemRow.querySelector('.dynamic-feat-name');
+                const descInput = itemRow.querySelector('.dynamic-feat-description');
+
+                typeSelect.value = featData.type;
+                nameInput.value = featData.name;
+                descInput.value = featData.desc;
+
+                // 統計更新
+                updateAllStats();
+            } catch (e) {
+                console.error("プリセット適用エラー", e);
+            }
         }
 
         function addWeapon() {
@@ -886,7 +1029,7 @@
             load = currentLoad;
             document.getElementById('loadDisplay').textContent = load;
         }
-       
+        
         // --- ドラッグ＆ドロップ機能 ---
         function setupDragAndDrop(containerId) {
             const container = document.getElementById(containerId);
@@ -920,7 +1063,7 @@
                 }
             });
 
-            // タッチデバイス対応は基本実装のまま
+            // タッチデバイス対応
             container.addEventListener('touchstart', e => {
                 const handle = e.target.closest('.drag-handle');
                 if (!handle) return;
@@ -981,7 +1124,7 @@
                 confirmCallback = onConfirm;
                 modal.classList.add('visible');
             };
-           
+            
             const hideModal = () => {
                 modal.classList.remove('visible');
                 confirmCallback = null;
@@ -1081,7 +1224,21 @@
             
             if (data.weaknesses) { data.weaknesses.forEach(text => { addWeakness(); const rows = document.querySelectorAll('#weaknessesContainer .item-row'); const lastRowInput = rows[rows.length - 1].querySelector('.dynamic-weakness'); if (lastRowInput) lastRowInput.value = text; }); }
             if (data.specialSkills) { data.specialSkills.forEach(skill => { addSpecialSkill(); const rows = document.querySelectorAll('#specialSkillsContainer .item-row'); const lastRow = rows[rows.length - 1]; if (lastRow) { lastRow.querySelector('.dynamic-special-skill-type').value = skill.type; lastRow.querySelector('.dynamic-special-skill-name').value = skill.name; } }); }
-            if (data.feats) { data.feats.forEach(feat => { addFeat(); const rows = document.querySelectorAll('#featsContainer .item-row'); const lastRow = rows[rows.length - 1]; if (lastRow) { lastRow.querySelector('.dynamic-feat-type').value = feat.type; lastRow.querySelector('.dynamic-feat-name').value = feat.name; lastRow.querySelector('.dynamic-feat-description').value = feat.description; lastRow.querySelector('.dynamic-feat-reward').checked = feat.reward; } }); }
+            
+            if (data.feats) { 
+                data.feats.forEach(feat => { 
+                    addFeat(); 
+                    const rows = document.querySelectorAll('#featsContainer .item-row'); 
+                    const lastRow = rows[rows.length - 1]; 
+                    if (lastRow) { 
+                        lastRow.querySelector('.dynamic-feat-type').value = feat.type; 
+                        lastRow.querySelector('.dynamic-feat-name').value = feat.name; 
+                        lastRow.querySelector('.dynamic-feat-description').value = feat.description; 
+                        lastRow.querySelector('.dynamic-feat-reward').checked = feat.reward; 
+                    } 
+                }); 
+            }
+            
             if (data.weapons) { data.weapons.forEach(weapon => { addWeapon(); const rows = document.querySelectorAll('#weaponsContainer .item-row'); const lastRow = rows[rows.length - 1]; if (lastRow) { lastRow.querySelector('.dynamic-weapon-type').value = weapon.type; lastRow.querySelector('.dynamic-weapon-description').value = weapon.description; } }); }
             if (data.armors) { data.armors.forEach(armor => { addArmor(); const rows = document.querySelectorAll('#armorsContainer .item-row'); const lastRow = rows[rows.length - 1]; if (lastRow) { lastRow.querySelector('.dynamic-armor-type').value = armor.type; lastRow.querySelector('.dynamic-armor-description').value = armor.description; } }); }
             if (data.sessionLogs) { data.sessionLogs.forEach(log => { addSessionLog(); const rows = document.querySelectorAll('#sessionLogsContainer .item-row'); const lastRow = rows[rows.length - 1]; if (lastRow) { lastRow.querySelector('.dynamic-session-title').value = log.title; lastRow.querySelector('.dynamic-session-scars').value = log.scars; lastRow.querySelector('.dynamic-session-exp').value = log.exp; lastRow.querySelector('.dynamic-session-notes').value = log.notes; } }); }
