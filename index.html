@@ -13,16 +13,24 @@
         :root {
             --bg-body: #0f1115;
             --bg-panel: #1a1d23;
+            --bg-sub-panel: #21252b;
             --bg-input: #252a33;
             --border-color: #383f4d;
             --accent-primary: #cf3a3a; /* 落ち着いた赤 */
             --accent-secondary: #4a90e2; /* 青（装飾用） */
+            --accent-hover: #5da4f3;
             --text-main: #e0e6ed;
             --text-muted: #949ca8;
+            --text-sub: #6b7280;
             --danger: #e74c3c;
+            --danger-hover: #ff6b6b;
             --success: #27ae60;
+            --success-hover: #2ecc71;
+            --warning: #f39c12;
             --radius: 6px;
+            --radius-lg: 12px;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.18);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
         }
 
         * {
@@ -36,7 +44,7 @@
             margin: 0;
             background-color: var(--bg-body);
             color: var(--text-main);
-            padding-bottom: 80px; /* フッター用スペース */
+            padding-bottom: 120px; /* フッター用スペース */
         }
 
         /* --- レイアウト --- */
@@ -140,7 +148,7 @@
             color: var(--text-main);
             font-size: 0.95rem;
             font-family: inherit;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
         }
 
         input:focus, textarea:focus, select:focus {
@@ -152,6 +160,19 @@
             resize: vertical;
             min-height: 80px;
             line-height: 1.5;
+        }
+        
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23949ca8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 30px;
+        }
+        select:hover {
+            border-color: var(--text-muted);
         }
 
         /* --- ステータス表示 --- */
@@ -290,12 +311,19 @@
             font-weight: 500;
             border: none;
             border-radius: var(--radius);
-            padding: 8px 16px;
+            padding: 10px 16px;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
+            font-size: 0.9rem;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(1);
         }
 
         /* 追加ボタン */
@@ -338,7 +366,6 @@
             color: var(--text-main);
             width: 100%;
             margin-bottom: 10px;
-            padding: 12px;
         }
         
         .action-btn:hover {
@@ -349,12 +376,129 @@
             background-color: rgba(39, 174, 96, 0.15);
             border: 1px solid var(--success);
             color: var(--success);
+            font-weight: 700;
         }
         
         .cocofolia-btn:hover {
             background-color: var(--success);
             color: white;
+            box-shadow: 0 0 15px rgba(39, 174, 96, 0.4);
         }
+
+        .btn-danger {
+            background-color: rgba(231, 76, 60, 0.15);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+        .btn-danger:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-primary {
+            background-color: rgba(74, 144, 226, 0.15);
+            border: 1px solid var(--accent-secondary);
+            color: var(--accent-secondary);
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-secondary);
+            color: white;
+        }
+
+        /* --- データ管理パネルUI --- */
+        .management-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .management-card {
+            background-color: var(--bg-sub-panel);
+            border-radius: var(--radius);
+            padding: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 8px;
+        }
+        
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 編集ステータスバッジ */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+        
+        .status-badge.active {
+            background-color: rgba(74, 144, 226, 0.15);
+            border-color: var(--accent-secondary);
+            color: var(--accent-secondary);
+        }
+        
+        .status-badge.new {
+            background-color: rgba(39, 174, 96, 0.15);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        /* ファイルインポートボタンのカスタマイズ */
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-custom-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px;
+            background-color: var(--bg-input);
+            border: 1px dashed var(--text-muted);
+            border-radius: var(--radius);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .file-input-wrapper:hover .file-custom-btn {
+            border-color: var(--accent-secondary);
+            color: var(--accent-secondary);
+            background-color: rgba(74, 144, 226, 0.05);
+        }
+
 
         /* --- 折りたたみヘッダー --- */
         .collapsible-header {
@@ -399,8 +543,8 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(26, 29, 35, 0.85);
-            backdrop-filter: blur(8px);
+            background: rgba(26, 29, 35, 0.9);
+            backdrop-filter: blur(10px);
             border: 1px solid var(--border-color);
             padding: 10px 30px;
             border-radius: 50px;
@@ -410,6 +554,7 @@
             align-items: center;
             gap: 15px;
             font-family: 'Roboto Mono', monospace;
+            transition: transform 0.3s ease;
         }
 
         #experience-tracker .label {
@@ -448,12 +593,18 @@
         .modal-content {
             background-color: var(--bg-panel);
             padding: 30px;
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             max-width: 400px;
             width: 90%;
             text-align: center;
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+        
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
         }
 
         .modal-buttons {
@@ -466,27 +617,76 @@
         .btn-confirm {
             background-color: var(--danger);
             color: white;
+            border: none;
         }
+        .btn-confirm:hover {
+            background-color: var(--danger-hover);
+        }
+        
         .btn-cancel {
             background-color: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-muted);
         }
+        .btn-cancel:hover {
+            background-color: rgba(255,255,255,0.05);
+            color: var(--text-main);
+        }
+
+        /* --- トースト通知 --- */
+        #toast-container {
+            position: fixed;
+            bottom: 80px; /* HUDの上 */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .toast {
+            background: rgba(30, 34, 40, 0.95);
+            color: var(--text-main);
+            padding: 12px 24px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .toast.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.info { border-left: 4px solid var(--accent-secondary); }
 
         /* ユーティリティ */
         .flex-row { display: flex; gap: 10px; width: 100%; }
         .flex-grow { flex-grow: 1; }
         .w-auto { width: auto; }
         .mt-2 { margin-top: 10px; }
+        .mb-2 { margin-bottom: 10px; }
         .text-sm { font-size: 0.85rem; }
-        .badge {
-            background: var(--bg-input);
-            border: 1px solid var(--border-color);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-        }
-
+        .text-muted { color: var(--text-muted); }
+        .text-warning { color: var(--warning); }
+        
         /* スクロールバー */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-body); }
@@ -505,16 +705,16 @@
         <div class="main-layout">
             <!-- 左カラム -->
             <div class="layout-column">
-               
+                
                 <!-- 基本情報 -->
                 <div class="section">
                     <h2>基本情報</h2>
                     <label for="characterName">キャラクター名</label>
                     <input type="text" id="characterName" onchange="updateAllStats()" placeholder="名前を入力">
-                   
+                    
                     <label for="characterRace">種族</label>
                     <input type="text" id="characterRace" onchange="updateAllStats()" placeholder="種族を入力">
-                   
+                    
                     <label for="characterSetting">キャラクター設定</label>
                     <textarea id="characterSetting" onchange="updateAllStats()" placeholder="背景や性格などの設定"></textarea>
                 </div>
@@ -584,7 +784,7 @@
 
             <!-- 右カラム -->
             <div class="layout-column">
-               
+                
                 <!-- 装備品 -->
                 <div class="section">
                     <h2 class="collapsible-header" onclick="toggleSection('equipmentContent')">装備品</h2>
@@ -608,14 +808,61 @@
                     </div>
                 </div>
 
-                <!-- データ管理 -->
+                <!-- データ管理 (UI刷新) -->
                 <div class="section">
                     <h2>データ管理</h2>
-                    <button type="button" class="action-btn" onclick="exportData()">データを保存 (.txt)</button>
-                    <button type="button" id="cocofolia-export-btn" class="action-btn cocofolia-btn" onclick="exportForCocofolia()">ココフォリア駒出力 (クリップボード)</button>
-                   
-                    <label for="importFile" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">データをロード</label>
-                    <input type="file" id="importFile" accept=".txt" onchange="importData(event)" style="background:transparent; border:none; padding-left:0;">
+                    
+                    <div class="management-panel">
+                        <!-- ブラウザ保存セクション -->
+                        <div class="management-card">
+                            <div class="card-header">
+                                <h3 class="card-title">保存リスト (LocalStorage)</h3>
+                                <span id="status-badge" class="status-badge new">新規作成</span>
+                            </div>
+
+                            <div class="flex-row mb-2">
+                                <select id="savedCharactersList" class="flex-grow">
+                                    <option value="">(保存データなし)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="flex-row">
+                                <button type="button" class="action-btn" onclick="loadSelectedCharacter()" id="btn-load-browser" disabled style="flex:2;">読込</button>
+                                <button type="button" class="action-btn btn-danger" onclick="deleteSelectedCharacter()" id="btn-delete-browser" disabled style="flex:1;">削除</button>
+                            </div>
+
+                            <div style="margin: 15px 0; border-top: 1px dashed var(--border-color);"></div>
+
+                            <div class="flex-row">
+                                <button type="button" class="action-btn" onclick="saveAsNew()" style="flex:1;">新規保存</button>
+                                <button type="button" class="action-btn btn-primary" id="btn-overwrite" onclick="saveOverwrite()" style="flex:1;" disabled>上書き保存</button>
+                            </div>
+                        </div>
+
+                        <!-- 外部出力・連携セクション -->
+                        <div class="management-card">
+                            <div class="card-header">
+                                <h3 class="card-title">外部出力・連携</h3>
+                            </div>
+                            
+                            <button type="button" id="cocofolia-export-btn" class="action-btn cocofolia-btn w-100" onclick="exportForCocofolia()">
+                                ココフォリア駒出力 (コピー)
+                            </button>
+                            
+                            <div class="flex-row mt-2">
+                                <button type="button" class="action-btn" onclick="exportData()" style="flex:1;">
+                                    ファイル保存 (.txt)
+                                </button>
+                                
+                                <div style="flex:1;">
+                                    <div class="file-input-wrapper">
+                                        <input type="file" id="importFile" accept=".txt" onchange="importData(event)">
+                                        <div class="file-custom-btn">ファイル読込</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -634,10 +881,13 @@
             <p id="modal-message" style="color:var(--text-muted);">この項目を削除しますか？</p>
             <div class="modal-buttons">
                 <button id="modal-cancel-btn" class="btn-cancel">キャンセル</button>
-                <button id="modal-confirm-btn" class="btn-confirm">削除</button>
+                <button id="modal-confirm-btn" class="btn-confirm">実行</button>
             </div>
         </div>
     </div>
+
+    <!-- トースト通知コンテナ -->
+    <div id="toast-container"></div>
 
     <script>
         // --- データベース (特技プリセット) ---
@@ -710,7 +960,7 @@
                 { name: "スリの極意", desc: "接近しており、相手の意識が逸れているなら、戦闘中でも物を盗める。" },
                 { name: "自動筆記具", desc: "アーティファクト「自動筆記具」所持。思考を自動で記録する。" },
                 { name: "即席", desc: "即席で物を作成する判定にボーナスを得る。アイデアを得やすくなる。" },
-                { name: "底なしの鞄", desc: "アーティファクト「底なしの鞄」所持。大きさ制限なく物を収納できる（重量はそのまま）。" },
+                { name: "底なしの鞄", desc: "AF「底なしの鞄」所持。大きさ制限なく物を収納できる（重量はそのまま）。" },
                 { name: "伝授", desc: "1時間指導することで、セッション中、対象の技能判定に+2ボーナス（回避/防御除く）。" },
                 { name: "調教：", desc: "名称に生物名を追記。生物を飼育し、命令できる。" },
                 { name: "天性の小手先", desc: "未取得の「一般技能」判定に常に+1のボーナスを得る。" },
@@ -729,6 +979,13 @@
         let experiencePoints = 100;
         let scars = 0;
         let load = 0;
+        
+        // LocalStorage Keys
+        const STORAGE_KEY_MULTI = 'ionia_characters_multi_v1';
+        const STORAGE_KEY_OLD = 'ionia_character_data_v1'; // 旧バージョンからの移行用
+
+        // 編集中のデータのID (nullなら新規)
+        let currentEditingId = null;
 
         const generalSkillNames = ["運動", "回避", "感覚", "観察", "技巧", "射撃", "社交", "知識", "白兵", "防御"];
         const specialSkillBaseTypes = ["運動", "感覚", "観察", "技巧", "射撃", "社交", "知識", "白兵"];
@@ -745,6 +1002,11 @@
             setupDragAndDrop('weaponsContainer');
             setupDragAndDrop('armorsContainer');
             setupConfirmationModal();
+            
+            // 旧データからの移行チェック
+            checkAndMigrateOldData();
+            
+            updateSavedCharactersList(); // リスト更新
         });
 
         // --- セクション表示切替関数 ---
@@ -846,7 +1108,7 @@
             });
         }
 
-        // --- 特技追加関数 (修正版) ---
+        // --- 特技追加関数 ---
         function addFeat() {
             addDynamicItem('featsContainer', (index) => {
                 const div = document.createElement('div');
@@ -1140,6 +1402,25 @@
             };
         }
 
+        // --- トースト通知機能 ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            
+            container.appendChild(toast);
+            
+            // アニメーション用に少し遅延させる
+            setTimeout(() => toast.classList.add('visible'), 10);
+
+            // 3秒後に消える
+            setTimeout(() => {
+                toast.classList.remove('visible');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
 
         // --- データエクスポート/インポート ---
         function gatherData() {
@@ -1156,7 +1437,8 @@
                 feats: [],
                 weapons: [],
                 armors: [],
-                sessionLogs: []
+                sessionLogs: [],
+                lastSaved: new Date().toISOString()
             };
             generalSkillNames.forEach(skillName => {
                 const checkboxId = `generalSkill_${skillName.replace(/\s/g, '')}`;
@@ -1170,6 +1452,195 @@
             document.querySelectorAll('#sessionLogsContainer .item-row').forEach(row => { data.sessionLogs.push({ title: row.querySelector('.dynamic-session-title').value, scars: row.querySelector('.dynamic-session-scars').value, exp: row.querySelector('.dynamic-session-exp').value, notes: row.querySelector('.dynamic-session-notes').value }); });
             return data;
         }
+
+        // --- LocalStorage 機能 (複数保存対応) ---
+        
+        // 旧データ形式からの移行
+        function checkAndMigrateOldData() {
+            const oldDataStr = localStorage.getItem(STORAGE_KEY_OLD);
+            if (oldDataStr) {
+                try {
+                    const oldData = JSON.parse(oldDataStr);
+                    // 新しいストレージ形式を取得
+                    const storageStr = localStorage.getItem(STORAGE_KEY_MULTI);
+                    const storage = storageStr ? JSON.parse(storageStr) : {};
+                    
+                    // ID生成して保存
+                    const newId = crypto.randomUUID();
+                    const name = oldData.characterName || "無名のキャラクター(旧データ)";
+                    const date = oldData.lastSaved || new Date().toISOString();
+                    
+                    storage[newId] = {
+                        name: name,
+                        updatedAt: date,
+                        data: oldData
+                    };
+                    
+                    localStorage.setItem(STORAGE_KEY_MULTI, JSON.stringify(storage));
+                    localStorage.removeItem(STORAGE_KEY_OLD); // 旧データ削除
+                    showToast("旧データを移行しました", "success");
+                } catch (e) {
+                    console.error("Migration failed:", e);
+                }
+            }
+        }
+
+        function getStorageData() {
+            const str = localStorage.getItem(STORAGE_KEY_MULTI);
+            return str ? JSON.parse(str) : {};
+        }
+
+        function saveStorageData(data) {
+            localStorage.setItem(STORAGE_KEY_MULTI, JSON.stringify(data));
+        }
+
+        function updateSavedCharactersList() {
+            const storage = getStorageData();
+            const select = document.getElementById('savedCharactersList');
+            const loadBtn = document.getElementById('btn-load-browser');
+            const deleteBtn = document.getElementById('btn-delete-browser');
+            const overwriteBtn = document.getElementById('btn-overwrite');
+            const statusBadge = document.getElementById('status-badge');
+
+            // 選択肢のリセット
+            select.innerHTML = '';
+            
+            const ids = Object.keys(storage).sort((a, b) => {
+                return new Date(storage[b].updatedAt) - new Date(storage[a].updatedAt); // 新しい順
+            });
+
+            if (ids.length === 0) {
+                select.innerHTML = '<option value="">(保存データなし)</option>';
+                loadBtn.disabled = true;
+                deleteBtn.disabled = true;
+            } else {
+                ids.forEach(id => {
+                    const char = storage[id];
+                    const date = new Date(char.updatedAt).toLocaleString('ja-JP');
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = `${char.name || '無名'} (${date})`;
+                    select.appendChild(option);
+                });
+                select.value = ""; // 初期状態は未選択
+                loadBtn.disabled = false; // 選択すれば押せるようにする
+                deleteBtn.disabled = false;
+            }
+
+            // ステータス表示更新
+            if (currentEditingId && storage[currentEditingId]) {
+                const char = storage[currentEditingId];
+                statusBadge.textContent = "編集中 (上書き可)";
+                statusBadge.className = "status-badge active";
+                overwriteBtn.disabled = false;
+                overwriteBtn.textContent = "上書き保存";
+            } else {
+                statusBadge.textContent = "新規作成";
+                statusBadge.className = "status-badge new";
+                overwriteBtn.disabled = true;
+                currentEditingId = null; // IDが無効ならリセット
+            }
+        }
+
+        // 新規保存
+        function saveAsNew() {
+            try {
+                const data = gatherData();
+                const storage = getStorageData();
+                const newId = crypto.randomUUID();
+                
+                storage[newId] = {
+                    name: data.characterName || "無名のキャラクター",
+                    updatedAt: new Date().toISOString(),
+                    data: data
+                };
+                
+                saveStorageData(storage);
+                
+                currentEditingId = newId; // 編集中のIDを更新
+                updateSavedCharactersList();
+                
+                // リストで選択状態にする
+                document.getElementById('savedCharactersList').value = newId;
+                
+                showToast("新規保存しました", "success");
+            } catch (e) {
+                console.error("Save Error:", e);
+                showToast("保存に失敗しました", "error");
+            }
+        }
+
+        // 上書き保存
+        function saveOverwrite() {
+            if (!currentEditingId) return;
+
+            try {
+                const data = gatherData();
+                const storage = getStorageData();
+                
+                if (!storage[currentEditingId]) {
+                    showToast("保存先データが見つかりません。新規保存してください。", "error");
+                    return;
+                }
+
+                storage[currentEditingId] = {
+                    name: data.characterName || "無名のキャラクター",
+                    updatedAt: new Date().toISOString(),
+                    data: data
+                };
+
+                saveStorageData(storage);
+                updateSavedCharactersList();
+                document.getElementById('savedCharactersList').value = currentEditingId;
+
+                showToast("上書き保存しました", "success");
+            } catch (e) {
+                console.error("Overwrite Error:", e);
+                showToast("保存に失敗しました", "error");
+            }
+        }
+
+        // 読み込み
+        function loadSelectedCharacter() {
+            const select = document.getElementById('savedCharactersList');
+            const id = select.value;
+            if (!id) return;
+
+            showConfirmationModal("現在の編集内容を破棄し、選択したデータを読み込みますか？", () => {
+                const storage = getStorageData();
+                const charData = storage[id];
+                if (charData) {
+                    applyData(charData.data);
+                    currentEditingId = id;
+                    updateSavedCharactersList();
+                    select.value = id; // 選択状態を維持
+                    showToast("データを読み込みました", "success");
+                } else {
+                    showToast("データの読み込みに失敗しました", "error");
+                }
+            });
+        }
+
+        // 削除
+        function deleteSelectedCharacter() {
+            const select = document.getElementById('savedCharactersList');
+            const id = select.value;
+            if (!id) return;
+
+            showConfirmationModal("選択したデータを完全に削除しますか？（この操作は取り消せません）", () => {
+                const storage = getStorageData();
+                delete storage[id];
+                saveStorageData(storage);
+                
+                if (currentEditingId === id) {
+                    currentEditingId = null;
+                }
+                
+                updateSavedCharactersList();
+                showToast("データを削除しました", "info");
+            });
+        }
+
 
         function exportData() {
             const data = gatherData();
@@ -1194,9 +1665,12 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     applyData(data);
+                    currentEditingId = null; // ファイル読み込み時は新規扱いにする（上書き事故防止）
+                    updateSavedCharactersList();
+                    showToast("ファイルを読み込みました（未保存の状態です）", "success");
                 } catch (error) {
                     console.error("インポートエラー:", error);
-                    alert("ファイルの読み込みに失敗しました。フォーマットを確認してください。");
+                    showToast("ファイルの読み込みに失敗しました", "error");
                 }
             };
             reader.readAsText(file);
@@ -1234,7 +1708,7 @@
                         lastRow.querySelector('.dynamic-feat-type').value = feat.type; 
                         lastRow.querySelector('.dynamic-feat-name').value = feat.name; 
                         lastRow.querySelector('.dynamic-feat-description').value = feat.description; 
-                        lastRow.querySelector('.dynamic-feat-reward').checked = feat.reward; 
+                        if(feat.reward !== undefined) lastRow.querySelector('.dynamic-feat-reward').checked = feat.reward; 
                     } 
                 }); 
             }
@@ -1302,7 +1776,6 @@
             
             const jsonString = JSON.stringify(cocofoliaData, null, 2);
             
-            // クリップボードAPIを優先使用し、フォールバックとしてexecCommandを使用
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(jsonString).then(() => {
                     showExportSuccess();
@@ -1324,7 +1797,7 @@
             try { success = document.execCommand('copy'); } catch (err) { console.error('execCommand copy failed', err); }
             document.body.removeChild(tempTextArea);
             if (success) showExportSuccess();
-            else alert("コピーに失敗しました。");
+            else showToast("コピーに失敗しました", "error");
         }
 
         function showExportSuccess() {
@@ -1333,6 +1806,9 @@
             exportButton.textContent = 'コピーしました！';
             exportButton.style.backgroundColor = 'var(--success)';
             exportButton.style.color = 'white';
+            
+            showToast("クリップボードにコピーしました", "success");
+
             setTimeout(() => { 
                 exportButton.textContent = originalText;
                 exportButton.style.backgroundColor = '';
